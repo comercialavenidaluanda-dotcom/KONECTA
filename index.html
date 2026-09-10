@@ -1,0 +1,4385 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Tudo Aqui | Diretório de Empresas Angolanas</title>
+
+<meta
+  name="description"
+  content="Tudo Aqui — Diretório de Empresas Angolanas e Negócios. Encontre empresas, serviços, notícias, publicidade e oportunidades em Angola."
+>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+
+*{
+  box-sizing:border-box;
+}
+
+html{
+  scroll-behavior:smooth;
+}
+
+:root{
+  --red:#ce1126;
+  --red-dark:#a90d1e;
+  --black:#080808;
+  --yellow:#f7d117;
+  --white:#fff;
+  --gray:#6b7280;
+  --light:#f4f5f7;
+  --green:#25d366;
+  --blue:#2563eb;
+}
+
+body{
+  margin:0;
+  font-family:Arial,Helvetica,sans-serif;
+  background:var(--light);
+  color:#222;
+}
+
+.flag-bar{
+  height:7px;
+  background:linear-gradient(
+    to right,
+    var(--red) 0 50%,
+    var(--black) 50% 100%
+  );
+  position:relative;
+}
+
+.flag-bar:after{
+  content:"";
+  position:absolute;
+  right:0;
+  top:0;
+  width:50%;
+  height:2px;
+  background:var(--yellow);
+}
+
+header{
+  position:sticky;
+  top:0;
+  z-index:100;
+  background:rgba(206,17,38,.98);
+  color:white;
+  box-shadow:0 3px 15px rgba(0,0,0,.18);
+}
+
+.header-inner{
+  max-width:1200px;
+  margin:auto;
+  padding:10px 18px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:20px;
+}
+
+.logo{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  min-width:0;
+}
+
+.logo-symbol{
+  width:52px;
+  height:52px;
+  min-width:52px;
+  border-radius:12px;
+  background:white;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  box-shadow:0 3px 10px rgba(0,0,0,.15);
+}
+
+.logo-symbol img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  padding:5px;
+  display:block;
+}
+
+.logo-symbol-fallback{
+  width:100%;
+  height:100%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:27px;
+  color:var(--red);
+  background:white;
+}
+
+.logo-text h1{
+  margin:0;
+  font-size:24px;
+  letter-spacing:.5px;
+}
+
+.logo-text p{
+  margin:3px 0 0;
+  font-size:12px;
+  opacity:.9;
+}
+
+nav{
+  display:flex;
+  gap:6px;
+  align-items:center;
+  flex-wrap:wrap;
+}
+
+nav button{
+  border:0;
+  background:transparent;
+  color:white;
+  padding:10px 12px;
+  border-radius:8px;
+  cursor:pointer;
+  font-weight:bold;
+}
+
+nav button:hover{
+  background:rgba(255,255,255,.15);
+}
+
+.menu-mobile{
+  display:none;
+  border:0;
+  background:var(--black);
+  color:white;
+  border-radius:8px;
+  padding:10px 13px;
+  cursor:pointer;
+}
+
+.hero{
+  min-height:560px;
+  position:relative;
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+
+  background-image:
+    linear-gradient(
+      90deg,
+      rgba(0,0,0,.84) 0%,
+      rgba(0,0,0,.65) 45%,
+      rgba(0,0,0,.28) 100%
+    ),
+    url("https://images.pexels.com/photos/16094813/pexels-photo-16094813/free-photo-of-clouds-above-sea-and-buildings-in-city.jpeg?auto=compress&dpr=1&w=1600");
+
+  background-size:cover;
+  background-position:center;
+}
+
+.hero:after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(0,0,0,.05),
+      rgba(0,0,0,.45)
+    );
+}
+
+.hero-content{
+  max-width:1200px;
+  width:100%;
+  margin:auto;
+  padding:70px 20px;
+  position:relative;
+  z-index:2;
+  color:white;
+}
+
+.hero-location{
+  display:inline-block;
+  background:rgba(247,209,23,.97);
+  color:#111;
+  padding:9px 15px;
+  border-radius:30px;
+  font-size:13px;
+  font-weight:bold;
+  margin-bottom:18px;
+}
+
+.hero h2{
+  font-size:58px;
+  line-height:1.03;
+  margin:0 0 17px;
+  max-width:760px;
+}
+
+.hero h2 span{
+  color:var(--yellow);
+}
+
+.hero p{
+  max-width:720px;
+  font-size:19px;
+  line-height:1.6;
+  color:#f5f5f5;
+  margin:0 0 20px;
+}
+
+.hero-stat{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  margin:20px 0 5px;
+  flex-wrap:wrap;
+}
+
+.hero-stat strong{
+  font-size:28px;
+  color:var(--yellow);
+}
+
+.hero-stat span{
+  font-size:14px;
+  color:#fff;
+}
+
+.hero-search{
+  max-width:850px;
+  margin-top:28px;
+  display:flex;
+  background:white;
+  padding:7px;
+  border-radius:13px;
+  box-shadow:0 10px 35px rgba(0,0,0,.35);
+}
+
+.hero-search input{
+  flex:1;
+  border:0;
+  outline:0;
+  padding:16px;
+  font-size:16px;
+  min-width:0;
+}
+
+.hero-search button{
+  border:0;
+  border-radius:9px;
+  background:var(--red);
+  color:white;
+  padding:0 27px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.hero-search button:hover{
+  background:var(--red-dark);
+}
+
+.container{
+  max-width:1200px;
+  margin:auto;
+  padding:0 18px 50px;
+}
+
+.section{
+  margin-top:45px;
+}
+
+.section-title{
+  display:flex;
+  align-items:end;
+  justify-content:space-between;
+  gap:15px;
+  margin-bottom:20px;
+}
+
+.section-title h2{
+  margin:0;
+  color:var(--black);
+  font-size:28px;
+}
+
+.section-title h2 span{
+  color:var(--red);
+}
+
+.section-title p{
+  margin:5px 0 0;
+  color:var(--gray);
+}
+
+.section-link{
+  color:var(--red);
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.featured-section{
+  margin-top:-45px;
+  position:relative;
+  z-index:5;
+}
+
+.featured-wrapper{
+  background:white;
+  border-radius:20px;
+  padding:25px;
+  box-shadow:0 10px 35px rgba(0,0,0,.16);
+}
+
+.featured-grid{
+  display:grid;
+  grid-template-columns:repeat(5,minmax(0,1fr));
+  gap:15px;
+  align-items:stretch;
+}
+
+.featured-card{
+  position:relative;
+  min-height:285px;
+  height:100%;
+  background:linear-gradient(145deg,#fff,#f7f7f7);
+  border:1px solid #eee;
+  border-radius:15px;
+  padding:18px;
+  overflow:hidden;
+  transition:.25s;
+  display:flex;
+  flex-direction:column;
+}
+
+.featured-card:hover{
+  transform:translateY(-5px);
+  box-shadow:0 12px 25px rgba(0,0,0,.13);
+  border-color:#ddd;
+}
+
+.featured-card:after{
+  content:"";
+  position:absolute;
+  width:120px;
+  height:120px;
+  right:-45px;
+  bottom:-45px;
+  border-radius:50%;
+  background:rgba(206,17,38,.08);
+  pointer-events:none;
+}
+
+.featured-badge{
+  display:inline-block;
+  width:max-content;
+  background:var(--yellow);
+  color:#111;
+  padding:5px 9px;
+  border-radius:20px;
+  font-size:10px;
+  font-weight:bold;
+  margin-bottom:13px;
+}
+
+.company-logo{
+  width:65px;
+  height:65px;
+  min-width:65px;
+  object-fit:contain;
+  object-position:center;
+  background:white;
+  border-radius:12px;
+  border:1px solid #eee;
+  padding:8px;
+  display:block;
+}
+
+.featured-card .company-logo{
+  width:82px;
+  height:82px;
+  min-width:82px;
+  padding:9px;
+  margin-bottom:2px;
+}
+
+.logo-placeholder{
+  width:65px;
+  height:65px;
+  min-width:65px;
+  border-radius:12px;
+  background:var(--red);
+  color:white;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:25px;
+  font-weight:bold;
+}
+
+.featured-card .logo-placeholder{
+  width:82px;
+  height:82px;
+  min-width:82px;
+  font-size:30px;
+  margin-bottom:2px;
+}
+
+.featured-card h3{
+  margin:12px 0 5px;
+  font-size:18px;
+  line-height:1.25;
+}
+
+.featured-category{
+  color:var(--red);
+  font-size:12px;
+  font-weight:bold;
+  line-height:1.35;
+}
+
+.featured-location{
+  color:var(--gray);
+  font-size:12px;
+  margin:8px 0;
+  line-height:1.4;
+}
+
+.view-company{
+  border:0;
+  background:var(--black);
+  color:white;
+  border-radius:8px;
+  padding:9px 12px;
+  font-weight:bold;
+  cursor:pointer;
+  margin-top:auto;
+  position:relative;
+  z-index:2;
+  width:max-content;
+}
+
+.view-company:hover{
+  background:var(--red);
+}
+
+.categories-grid{
+  display:grid;
+  grid-template-columns:repeat(6,minmax(0,1fr));
+  gap:12px;
+  align-items:stretch;
+}
+
+.category{
+  background:white;
+  border-radius:13px;
+  padding:20px 10px;
+  min-height:115px;
+  text-align:center;
+  cursor:pointer;
+  border:1px solid #eee;
+  transition:.2s;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+}
+
+.category:hover{
+  transform:translateY(-3px);
+  border-color:var(--red);
+  box-shadow:0 7px 18px rgba(0,0,0,.08);
+}
+
+.category-icon{
+  font-size:29px;
+  display:block;
+  margin-bottom:9px;
+  line-height:1;
+}
+
+.category strong{
+  font-size:13px;
+  line-height:1.25;
+}
+
+.filter-box{
+  background:white;
+  border-radius:15px;
+  padding:18px;
+  margin-bottom:20px;
+  box-shadow:0 3px 15px rgba(0,0,0,.06);
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+.filter-box input,
+.filter-box select{
+  flex:1;
+  min-width:190px;
+  padding:13px;
+  border:1px solid #ddd;
+  border-radius:8px;
+  outline:0;
+}
+
+.filter-box input:focus,
+.filter-box select:focus{
+  border-color:var(--red);
+}
+
+.filter-box button{
+  padding:13px 20px;
+  border:0;
+  border-radius:8px;
+  background:var(--red);
+  color:white;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.company-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:17px;
+}
+
+.company-card{
+  background:white;
+  border-radius:15px;
+  padding:20px;
+  border:1px solid #eee;
+  box-shadow:0 3px 12px rgba(0,0,0,.05);
+  transition:.25s;
+}
+
+.company-card:hover{
+  transform:translateY(-3px);
+  box-shadow:0 10px 25px rgba(0,0,0,.1);
+}
+
+.company-top{
+  display:flex;
+  gap:14px;
+  align-items:center;
+}
+
+.company-card h3{
+  margin:0 0 5px;
+}
+
+.company-card .category-text{
+  color:var(--red);
+  font-size:13px;
+  font-weight:bold;
+}
+
+.company-info{
+  color:#555;
+  font-size:14px;
+  line-height:1.6;
+  margin:15px 0;
+}
+
+.badge-verified{
+  display:inline-block;
+  background:#fff5c7;
+  color:#8a6d00;
+  padding:5px 8px;
+  border-radius:20px;
+  font-size:11px;
+  font-weight:bold;
+}
+
+.news-grid{
+  display:grid;
+  grid-template-columns:2fr 1fr 1fr;
+  gap:18px;
+}
+
+.news-card{
+  background:white;
+  border-radius:15px;
+  overflow:hidden;
+  box-shadow:0 3px 12px rgba(0,0,0,.07);
+}
+
+.news-image{
+  height:190px;
+  background:linear-gradient(135deg,var(--red),#111);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:white;
+  font-size:40px;
+}
+
+.news-image img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+.news-content{
+  padding:18px;
+}
+
+.news-content h3{
+  margin:0 0 9px;
+  line-height:1.3;
+}
+
+.news-content p{
+  color:#666;
+  line-height:1.5;
+  font-size:14px;
+}
+
+.news-date{
+  font-size:12px;
+  color:var(--red);
+  font-weight:bold;
+}
+
+.ads-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:18px;
+}
+
+.ad-card{
+  background:white;
+  border-radius:15px;
+  padding:10px;
+  box-shadow:0 3px 12px rgba(0,0,0,.07);
+  text-align:center;
+}
+
+.ad-card img{
+  width:100%;
+  height:180px;
+  object-fit:cover;
+  border-radius:10px;
+}
+
+.ad-card strong{
+  display:block;
+  padding:12px;
+}
+
+.video-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:18px;
+}
+
+.video-card{
+  background:white;
+  border-radius:15px;
+  padding:12px;
+  box-shadow:0 3px 12px rgba(0,0,0,.07);
+}
+
+.video-card iframe{
+  width:100%;
+  height:210px;
+  border:0;
+  border-radius:10px;
+}
+
+.video-card h3{
+  margin:12px 4px 5px;
+}
+
+.stats{
+  margin-top:45px;
+  background:var(--black);
+  border-radius:20px;
+  padding:35px;
+  color:white;
+}
+
+.stats-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:20px;
+  text-align:center;
+}
+
+.stat-number{
+  font-size:35px;
+  font-weight:bold;
+  color:var(--yellow);
+}
+
+.stat-label{
+  color:#ddd;
+  margin-top:5px;
+}
+
+.cta{
+  margin-top:45px;
+  border-radius:20px;
+  padding:45px 30px;
+  background:linear-gradient(120deg,var(--red),#970d1c);
+  color:white;
+  text-align:center;
+}
+
+.cta h2{
+  font-size:30px;
+  margin:0 0 10px;
+}
+
+.cta p{
+  max-width:650px;
+  margin:0 auto 22px;
+  line-height:1.6;
+}
+
+.cta button{
+  border:0;
+  background:var(--yellow);
+  color:#111;
+  padding:14px 23px;
+  border-radius:9px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.newsletter{
+  margin-top:45px;
+  background:white;
+  border-radius:18px;
+  padding:30px;
+  box-shadow:0 3px 15px rgba(0,0,0,.06);
+  text-align:center;
+}
+
+.newsletter h2{
+  margin:0 0 8px;
+}
+
+.newsletter p{
+  color:#666;
+}
+
+.newsletter-form{
+  max-width:650px;
+  margin:20px auto 0;
+  display:flex;
+  gap:10px;
+}
+
+.newsletter-form input{
+  flex:1;
+  padding:14px;
+  border:1px solid #ddd;
+  border-radius:8px;
+  outline:none;
+}
+
+.newsletter-form input:focus{
+  border-color:var(--red);
+}
+
+.newsletter-form button{
+  border:0;
+  background:var(--red);
+  color:white;
+  border-radius:8px;
+  padding:0 20px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+footer{
+  margin-top:50px;
+  background:#080808;
+  color:white;
+  padding:50px 20px 25px;
+}
+
+.footer-inner{
+  max-width:1200px;
+  margin:auto;
+  display:grid;
+  grid-template-columns:2fr 1fr 1fr 1fr;
+  gap:30px;
+}
+
+.footer-inner h3{
+  color:var(--yellow);
+  margin-top:0;
+}
+
+.footer-inner p,
+.footer-inner li{
+  color:#bbb;
+  line-height:1.7;
+}
+
+.footer-inner ul{
+  padding:0;
+  list-style:none;
+}
+
+.footer-inner a{
+  transition:.2s;
+}
+
+.footer-inner a:hover{
+  color:white !important;
+}
+
+.footer-brand{
+  font-size:25px;
+  font-weight:bold;
+}
+
+.footer-slogan{
+  color:white !important;
+  font-weight:bold;
+}
+
+.footer-contact-number{
+  color:#25d366 !important;
+  font-weight:bold;
+}
+
+.copyright{
+  max-width:1200px;
+  margin:30px auto 0;
+  padding-top:20px;
+  border-top:1px solid #333;
+  text-align:center;
+  color:#aaa;
+  line-height:1.7;
+}
+
+.modal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.72);
+  z-index:500;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:18px;
+}
+
+.modal.show{
+  display:flex;
+}
+
+.modal-box{
+  background:white;
+  width:100%;
+  max-width:700px;
+  max-height:92vh;
+  overflow:auto;
+  border-radius:20px;
+  padding:28px;
+  position:relative;
+}
+
+.close-modal{
+  position:absolute;
+  top:15px;
+  right:15px;
+  border:0;
+  width:38px;
+  height:38px;
+  border-radius:50%;
+  background:#eee;
+  cursor:pointer;
+  font-size:18px;
+}
+
+.detail-header{
+  display:flex;
+  align-items:center;
+  gap:18px;
+  padding-right:45px;
+  margin-bottom:25px;
+}
+
+.detail-logo{
+  width:90px;
+  height:90px;
+  border-radius:15px;
+  border:1px solid #eee;
+  padding:10px;
+  object-fit:contain;
+  background:white;
+}
+
+.detail-placeholder{
+  width:90px;
+  height:90px;
+  border-radius:15px;
+  background:var(--red);
+  color:white;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:35px;
+  font-weight:bold;
+}
+
+.detail-header h2{
+  margin:0 0 7px;
+}
+
+.detail-category{
+  color:var(--red);
+  font-weight:bold;
+}
+
+.detail-section{
+  border-top:1px solid #eee;
+  padding:18px 0;
+}
+
+.detail-section h3{
+  margin-top:0;
+}
+
+.detail-row{
+  display:flex;
+  gap:10px;
+  margin:10px 0;
+  flex-wrap:wrap;
+}
+
+.detail-actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  margin-top:20px;
+}
+
+.action-btn{
+  border:0;
+  border-radius:8px;
+  padding:12px 16px;
+  color:white;
+  font-weight:bold;
+  cursor:pointer;
+  text-decoration:none;
+  display:inline-block;
+}
+
+.action-red{
+  background:var(--red);
+}
+
+.action-black{
+  background:#111;
+}
+
+.action-green{
+  background:var(--green);
+}
+
+.action-yellow{
+  background:var(--yellow);
+  color:#111;
+}
+
+.loading,
+.empty,
+.error{
+  background:white;
+  padding:25px;
+  border-radius:12px;
+  text-align:center;
+  color:#666;
+}
+
+.error{
+  border-left:4px solid var(--red);
+}
+
+.loading{
+  border-left:4px solid var(--yellow);
+}
+
+@media(max-width:1100px){
+
+  .featured-grid{
+    grid-template-columns:repeat(3,minmax(0,1fr));
+  }
+
+  .categories-grid{
+    grid-template-columns:repeat(4,minmax(0,1fr));
+  }
+
+  .hero h2{
+    font-size:48px;
+  }
+
+}
+
+@media(max-width:950px){
+
+  .hero h2{
+    font-size:42px;
+  }
+
+  .featured-grid,
+  .company-grid,
+  .ads-grid,
+  .video-grid{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .categories-grid{
+    grid-template-columns:repeat(3,minmax(0,1fr));
+  }
+
+  .news-grid{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .news-card:first-child{
+    grid-column:1/-1;
+  }
+
+  .footer-inner{
+    grid-template-columns:1fr 1fr;
+  }
+
+}
+
+@media(max-width:700px){
+
+  nav{
+    display:none;
+    width:100%;
+  }
+
+  nav.open{
+    display:flex;
+    flex-direction:column;
+    align-items:stretch;
+  }
+
+  .menu-mobile{
+    display:block;
+  }
+
+  .header-inner{
+    flex-wrap:wrap;
+  }
+
+  .hero{
+    min-height:620px;
+  }
+
+  .hero h2{
+    font-size:35px;
+  }
+
+  .hero p{
+    font-size:17px;
+  }
+
+  .hero-stat strong{
+    font-size:24px;
+  }
+
+  .hero-search{
+    flex-direction:column;
+  }
+
+  .hero-search button{
+    width:100%;
+    margin-top:6px;
+    padding:15px;
+  }
+
+  .featured-section{
+    margin-top:-30px;
+  }
+
+  .featured-grid,
+  .company-grid,
+  .ads-grid,
+  .video-grid,
+  .news-grid{
+    grid-template-columns:1fr;
+  }
+
+  .categories-grid{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+  }
+
+  .stats-grid{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .newsletter-form{
+    flex-direction:column;
+  }
+
+  .newsletter-form button{
+    padding:14px;
+  }
+
+  .footer-inner{
+    grid-template-columns:1fr;
+  }
+
+  .detail-header{
+    align-items:flex-start;
+  }
+
+  .detail-logo,
+  .detail-placeholder{
+    width:75px;
+    height:75px;
+  }
+
+}
+
+@media(max-width:420px){
+
+  .logo-symbol{
+    width:45px;
+    height:45px;
+    min-width:45px;
+  }
+
+  .logo-text h1{
+    font-size:20px;
+  }
+
+  .logo-text p{
+    font-size:10px;
+  }
+
+  .hero h2{
+    font-size:31px;
+  }
+
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="flag-bar"></div>
+
+<header>
+
+  <div class="header-inner">
+
+    <div class="logo">
+
+      <div
+        class="logo-symbol"
+        id="logoSiteContainer"
+      >
+        <div class="logo-symbol-fallback">
+          🇦🇴
+        </div>
+      </div>
+
+      <div class="logo-text">
+
+        <h1 id="nomeSite">
+          TUDO AQUI
+        </h1>
+
+        <p id="sloganSite">
+          Diretório de Empresas Angolanas e Negócios
+        </p>
+
+      </div>
+
+    </div>
+
+    <button
+      class="menu-mobile"
+      onclick="toggleMenu()"
+    >
+      ☰ Menu
+    </button>
+
+    <nav id="menu">
+
+      <button onclick="ir('inicio')">
+        Início
+      </button>
+
+      <button onclick="ir('empresas')">
+        Empresas
+      </button>
+
+      <button onclick="ir('categorias')">
+        Categorias
+      </button>
+
+      <button onclick="ir('noticias')">
+        Notícias
+      </button>
+
+      <button onclick="ir('publicidade')">
+        Publicidade
+      </button>
+
+      <button onclick="ir('videos')">
+        Vídeos
+      </button>
+
+    </nav>
+
+  </div>
+
+</header>
+
+
+<section class="hero" id="inicio">
+
+  <div class="hero-content">
+
+    <span class="hero-location">
+      🇦🇴 LUANDA • ANGOLA
+    </span>
+
+    <h2>
+      Encontre <span>tudo</span> em Angola.
+    </h2>
+
+    <p>
+      Empresas, serviços, produtos, negócios e informação.
+      O Tudo Aqui conecta pessoas e empresas num único lugar.
+    </p>
+
+    <div class="hero-stat">
+
+      <strong id="heroTotalEmpresas">
+        0+
+      </strong>
+
+      <span>
+        empresas e parceiros
+      </span>
+
+    </div>
+
+    <div class="hero-search">
+
+      <input
+        id="heroSearch"
+        type="text"
+        placeholder="Pesquisar empresa, serviço ou categoria..."
+        oninput="pesquisarHero()"
+      >
+
+      <button onclick="executarPesquisa()">
+        🔎 PESQUISAR
+      </button>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<main class="container">
+
+
+<section class="featured-section section">
+
+  <div class="featured-wrapper">
+
+    <div class="section-title">
+
+      <div>
+
+        <h2>
+          ⭐ Empresas <span>em destaque</span>
+        </h2>
+
+        <p>
+          Conheça empresas selecionadas no Tudo Aqui.
+        </p>
+
+      </div>
+
+      <div
+        class="section-link"
+        onclick="ir('empresas')"
+      >
+        Ver todas →
+      </div>
+
+    </div>
+
+    <div id="empresasDestaque">
+
+      <div class="loading">
+        A carregar empresas em destaque...
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<section id="categorias" class="section">
+
+  <div class="section-title">
+
+    <div>
+
+      <h2>
+        🏢 Explore por <span>categoria</span>
+      </h2>
+
+      <p>
+        Encontre rapidamente o que procura.
+      </p>
+
+    </div>
+
+  </div>
+
+  <div class="categories-grid">
+
+    <div class="category" onclick="filtrarCategoria('Bancos')">
+      <span class="category-icon">🏦</span>
+      <strong>Bancos</strong>
+    </div>
+
+    <div class="category" onclick="filtrarCategoria('Telecomunicações')">
+      <span class="category-icon">📡</span>
+      <strong>Telecomunicações</strong>
+    </div>
+
+    <div class="category" onclick="filtrarCategoria('Construção')">
+      <span class="category-icon">🏗️</span>
+      <strong>Construção</strong>
+    </div>
+
+    <div class="category" onclick="filtrarCategoria('Saúde')">
+      <span class="category-icon">🏥</span>
+      <strong>Saúde</strong>
+    </div>
+
+    <div class="category" onclick="filtrarCategoria('Educação')">
+      <span class="category-icon">🎓</span>
+      <strong>Educação</strong>
+    </div>
+
+    <div class="category" onclick="filtrarCategoria('Hotéis')">
+      <span class="category-icon">🏨</span>
+      <strong>Hotéis</strong>
+    </div>
+
+    <div class="category" onclick="filtrarCategoria('Restaurantes')">
+      <span class="category-icon">🍽️</span>
+      <strong>Restaurantes</strong>
+    </div>
+
+    <div class="category" onclick="filtrarCategoria('Tecnologia')">
+      <span class="category-icon">💻</span>
+      <strong>Tecnologia</strong>
+    </div>
+
+    <div class="category" onclick="filtrarCategoria('Automóveis')">
+      <span class="category-icon">🚗</span>
+      <strong>Automóveis</strong>
+    </div>
+
+    <div class="category" onclick="filtrarCategoria('Turismo')">
+      <span class="category-icon">✈️</span>
+      <strong>Turismo</strong>
+    </div>
+
+    <div class="category" onclick="filtrarCategoria('Comércio')">
+      <span class="category-icon">🛒</span>
+      <strong>Comércio</strong>
+    </div>
+
+    <div class="category" onclick="filtrarCategoria('Energia')">
+      <span class="category-icon">⚡</span>
+      <strong>Energia</strong>
+    </div>
+
+  </div>
+
+</section>
+
+
+<section id="empresas" class="section">
+
+  <div class="section-title">
+
+    <div>
+
+      <h2>
+        🏢 Encontre uma <span>empresa</span>
+      </h2>
+
+      <p>
+        Pesquise empresas e serviços em Angola.
+      </p>
+
+    </div>
+
+  </div>
+
+  <div class="filter-box">
+
+    <input
+      id="empresaPesquisa"
+      placeholder="Nome, serviço, contacto ou localização..."
+      oninput="pesquisarEmpresas()"
+    >
+
+    <select
+      id="categoriaFiltro"
+      onchange="pesquisarEmpresas()"
+    >
+
+      <option value="">
+        Todas as categorias
+      </option>
+
+      <option>Bancos</option>
+      <option>Telecomunicações</option>
+      <option>Construção</option>
+      <option>Saúde</option>
+      <option>Educação</option>
+      <option>Hotéis</option>
+      <option>Restaurantes</option>
+      <option>Tecnologia</option>
+      <option>Automóveis</option>
+      <option>Turismo</option>
+      <option>Comércio</option>
+      <option>Energia</option>
+
+    </select>
+
+    <button onclick="limparPesquisa()">
+      Limpar
+    </button>
+
+  </div>
+
+  <div id="resultadoEmpresas">
+
+    <div class="loading">
+      A carregar empresas...
+    </div>
+
+  </div>
+
+</section>
+
+
+<section id="noticias" class="section">
+
+  <div class="section-title">
+
+    <div>
+
+      <h2>
+        📰 Notícias em <span>destaque</span>
+      </h2>
+
+      <p>
+        Informação e novidades.
+      </p>
+
+    </div>
+
+  </div>
+
+  <div id="listaNoticias">
+
+    <div class="loading">
+      A carregar notícias...
+    </div>
+
+  </div>
+
+</section>
+
+
+<section id="publicidade" class="section">
+
+  <div class="section-title">
+
+    <div>
+
+      <h2>
+        📢 <span>Publicidade</span>
+      </h2>
+
+      <p>
+        Empresas e marcas em destaque.
+      </p>
+
+    </div>
+
+  </div>
+
+  <div id="listaPublicidade">
+
+    <div class="loading">
+      A carregar publicidade...
+    </div>
+
+  </div>
+
+</section>
+
+
+<section id="videos" class="section">
+
+  <div class="section-title">
+
+    <div>
+
+      <h2>
+        🎥 Tudo Aqui <span>TV</span>
+      </h2>
+
+      <p>
+        Vídeos e conteúdos em destaque.
+      </p>
+
+    </div>
+
+  </div>
+
+  <div id="listaVideos">
+
+    <div class="loading">
+      A carregar vídeos...
+    </div>
+
+  </div>
+
+</section>
+
+
+<section class="stats">
+
+  <div class="stats-grid">
+
+    <div>
+      <div
+        class="stat-number"
+        id="totalEmpresas"
+      >
+        0+
+      </div>
+
+      <div class="stat-label">
+        Empresas
+      </div>
+    </div>
+
+    <div>
+      <div class="stat-number">
+        12+
+      </div>
+
+      <div class="stat-label">
+        Categorias
+      </div>
+    </div>
+
+    <div>
+      <div class="stat-number">
+        18
+      </div>
+
+      <div class="stat-label">
+        Províncias
+      </div>
+    </div>
+
+    <div>
+      <div class="stat-number">
+        24/7
+      </div>
+
+      <div class="stat-label">
+        Disponível
+      </div>
+    </div>
+
+  </div>
+
+</section>
+
+
+<section class="cta">
+
+  <h2>
+    A sua empresa ainda não está no Tudo Aqui?
+  </h2>
+
+  <p>
+    Apresente a sua empresa a milhares de potenciais clientes
+    e aumente a sua presença digital em Angola.
+  </p>
+
+  <button
+    onclick="alert('Em breve poderá cadastrar a sua empresa diretamente no Tudo Aqui.')"
+  >
+    CADASTRAR EMPRESA
+  </button>
+
+</section>
+
+
+<section class="newsletter">
+
+  <h2>
+    📩 Receba novidades do Tudo Aqui
+  </h2>
+
+  <p>
+    Notícias, empresas, oportunidades e novidades diretamente no seu e-mail.
+  </p>
+
+  <form
+    class="newsletter-form"
+    onsubmit="inscrever(event)"
+  >
+
+    <input
+      id="newsletterEmail"
+      type="email"
+      placeholder="O seu e-mail"
+      required
+    >
+
+    <button type="submit">
+      INSCREVER
+    </button>
+
+  </form>
+
+  <div id="newsletterMsg"></div>
+
+</section>
+
+</main>
+
+
+<footer>
+
+  <div class="footer-inner">
+
+    <div>
+
+      <h3
+        class="footer-brand"
+        id="footerNomeSite"
+      >
+        TUDO AQUI
+      </h3>
+
+      <p
+        class="footer-slogan"
+        id="footerSlogan"
+      >
+        Diretório de Empresas Angolanas e Negócios.
+      </p>
+
+      <p>
+        Conectando empresas, impulsionando negócios.
+      </p>
+
+      <p>
+        Encontre empresas, serviços, produtos,
+        notícias e oportunidades num único lugar.
+      </p>
+
+    </div>
+
+    <div>
+
+      <h3>
+        Diretório
+      </h3>
+
+      <ul>
+
+        <li>
+          <a
+            href="#empresas"
+            style="color:#bbb;text-decoration:none;"
+          >
+            Empresas
+          </a>
+        </li>
+
+        <li>
+          <a
+            href="#categorias"
+            style="color:#bbb;text-decoration:none;"
+          >
+            Categorias
+          </a>
+        </li>
+
+        <li>
+          <a
+            href="#inicio"
+            style="color:#bbb;text-decoration:none;"
+          >
+            Empresas em destaque
+          </a>
+        </li>
+
+        <li>
+          <a
+            href="#publicidade"
+            style="color:#bbb;text-decoration:none;"
+          >
+            Publicidade
+          </a>
+        </li>
+
+      </ul>
+
+    </div>
+
+    <div>
+
+      <h3>
+        Conteúdo
+      </h3>
+
+      <ul>
+
+        <li>
+          <a
+            href="#noticias"
+            style="color:#bbb;text-decoration:none;"
+          >
+            Notícias
+          </a>
+        </li>
+
+        <li>
+          <a
+            href="#videos"
+            style="color:#bbb;text-decoration:none;"
+          >
+            Vídeos
+          </a>
+        </li>
+
+        <li>
+          Oportunidades
+        </li>
+
+        <li>
+          Novidades
+        </li>
+
+      </ul>
+
+    </div>
+
+    <div>
+
+      <h3>
+        Contacto
+      </h3>
+
+      <ul>
+
+        <li>
+          📍 Luanda, Angola
+        </li>
+
+        <li>
+          📞
+          <a
+            href="tel:+244946110370"
+            style="color:#bbb;text-decoration:none;"
+          >
+            946 110 370
+          </a>
+        </li>
+
+        <li>
+          💬
+          <a
+            href="https://wa.me/244946110370"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="footer-contact-number"
+            style="text-decoration:none;"
+          >
+            WhatsApp
+          </a>
+        </li>
+
+        <li>
+          ✉️
+          <a
+            href="mailto:geral.ivataxi@gmail.com"
+            style="color:#bbb;text-decoration:none;"
+          >
+            geral.ivataxi@gmail.com
+          </a>
+        </li>
+
+      </ul>
+
+    </div>
+
+  </div>
+
+  <div class="copyright">
+
+    © 2026
+    <span id="copyrightNomeSite">
+      Tudo Aqui
+    </span>
+    — Diretório de Empresas Angolanas e Negócios
+
+    <br>
+
+    Conectando empresas, impulsionando negócios.
+
+  </div>
+
+</footer>
+
+
+<div
+  id="empresaModal"
+  class="modal"
+>
+
+  <div class="modal-box">
+
+    <button
+      class="close-modal"
+      onclick="fecharModal()"
+      aria-label="Fechar"
+    >
+      ✕
+    </button>
+
+    <div id="empresaDetalhe"></div>
+
+  </div>
+
+</div>
+
+
+<script>
+
+/* =========================================================
+   SUPABASE
+========================================================= */
+
+const SUPABASE_URL =
+  "https://earucsaqqtbllnqsxvlb.supabase.co";
+
+const SUPABASE_KEY =
+  "sb_publishable_npmGIVLGfRsF8L9UINRnrA_9yqmA7UK";
+
+const STORAGE_BUCKET =
+  "empresas-imagens";
+
+const supabaseClient =
+  window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
+
+
+/* =========================================================
+   VARIÁVEIS
+========================================================= */
+
+let empresas = [];
+
+let empresasFiltradas = [];
+
+let configuracaoSite = null;
+
+
+/* =========================================================
+   SEGURANÇA HTML
+========================================================= */
+
+function escapar(valor){
+
+  return String(valor ?? "")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+
+}
+
+
+/* =========================================================
+   URLS DE LOGOTIPOS
+   CORREÇÃO PRINCIPAL
+========================================================= */
+
+function construirLogoPublico(valor){
+
+  let raw =
+    String(valor || "")
+      .trim();
+
+  if(!raw){
+    return "";
+  }
+
+
+  /*
+   * Se já for URL completa,
+   * utilizamos a URL.
+   */
+  if(
+    /^https?:\/\//i.test(raw)
+  ){
+
+    /*
+     * Corrige automaticamente
+     * URLs antigas que apontem
+     * para o bucket "logos".
+     */
+    raw =
+      raw.replace(
+        "/storage/v1/object/public/logos/",
+        "/storage/v1/object/public/empresas-imagens/"
+      );
+
+    return raw;
+  }
+
+
+  /*
+   * Se veio somente o caminho,
+   * construímos a URL pública.
+   */
+  raw =
+    raw
+      .replace(/^\/+/,"")
+      .replace(
+        /^empresas-imagens\//i,
+        ""
+      );
+
+
+  /*
+   * Remove eventualmente:
+   * storage/v1/object/public/
+   */
+  raw =
+    raw.replace(
+      /^storage\/v1\/object\/public\//i,
+      ""
+    );
+
+
+  /*
+   * Se ainda vier com logos/,
+   * troca para o bucket correto.
+   */
+  raw =
+    raw.replace(
+      /^logos\//i,
+      ""
+    );
+
+
+  /*
+   * Codifica cada parte do caminho
+   * sem destruir as barras.
+   */
+  const caminho =
+    raw
+      .split("/")
+      .filter(Boolean)
+      .map(parte =>
+        encodeURIComponent(parte)
+      )
+      .join("/");
+
+
+  return (
+    SUPABASE_URL +
+    "/storage/v1/object/public/" +
+    STORAGE_BUCKET +
+    "/" +
+    caminho
+  );
+
+}
+
+
+/* =========================================================
+   LOGO DA EMPRESA
+========================================================= */
+
+function obterLogoEmpresa(e){
+
+  if(!e){
+    return "";
+  }
+
+  return construirLogoPublico(
+    e.logo_url
+  );
+
+}
+
+
+/* =========================================================
+   TRATAMENTO DE ERRO DOS LOGOTIPOS
+========================================================= */
+
+function erroLogoEmpresa(img){
+
+  if(!img){
+    return;
+  }
+
+
+  /*
+   * Guarda o URL original
+   * para podermos tentar novamente.
+   */
+  const original =
+    img.dataset.originalLogo || "";
+
+
+  const tentativa =
+    img.dataset.tentativa || "0";
+
+
+  /*
+   * Primeira tentativa:
+   * reconstruir URL usando o bucket
+   * empresas-imagens.
+   */
+  if(
+    tentativa === "0" &&
+    original
+  ){
+
+    const novoUrl =
+      construirLogoPublico(
+        original
+      );
+
+
+    img.dataset.tentativa = "1";
+
+
+    if(
+      novoUrl &&
+      novoUrl !== img.src
+    ){
+
+      img.src =
+        novoUrl;
+
+      return;
+
+    }
+
+  }
+
+
+  /*
+   * Segunda tentativa:
+   * adiciona cache-buster.
+   */
+  if(
+    tentativa === "1" &&
+    img.src
+  ){
+
+    img.dataset.tentativa = "2";
+
+
+    const separador =
+      img.src.includes("?")
+        ? "&"
+        : "?";
+
+
+    img.src =
+      img.src +
+      separador +
+      "v=" +
+      Date.now();
+
+
+    return;
+
+  }
+
+
+  /*
+   * Se todas as tentativas falharem,
+   * mostra a inicial.
+   */
+  img.onerror = null;
+
+  img.style.display = "none";
+
+  const fallback =
+    img.nextElementSibling;
+
+
+  if(fallback){
+
+    fallback.style.display =
+      "flex";
+
+  }
+
+}
+
+
+/* =========================================================
+   LOGO DO SITE
+========================================================= */
+
+function logoSiteErro(){
+
+  const container =
+    document.getElementById(
+      "logoSiteContainer"
+    );
+
+  if(!container){
+    return;
+  }
+
+  container.innerHTML = `
+
+    <div class="logo-symbol-fallback">
+      🇦🇴
+    </div>
+
+  `;
+
+}
+
+
+/* =========================================================
+   NAVEGAÇÃO
+========================================================= */
+
+function ir(id){
+
+  const elemento =
+    document.getElementById(id);
+
+  if(elemento){
+
+    elemento.scrollIntoView({
+      behavior:"smooth"
+    });
+
+  }
+
+}
+
+
+function toggleMenu(){
+
+  document
+    .getElementById("menu")
+    .classList
+    .toggle("open");
+
+}
+
+
+/* =========================================================
+   CONFIGURAÇÃO DO SITE
+========================================================= */
+
+async function carregarConfiguracaoSite(){
+
+  try{
+
+    const {
+      data,
+      error
+    } = await supabaseClient
+
+      .from("configuracao_site")
+
+      .select(
+        "id,logo_url,nome_site,slogan"
+      )
+
+      .order(
+        "id",
+        {
+          ascending:true
+        }
+      )
+
+      .limit(1)
+      .maybeSingle();
+
+
+    if(error){
+
+      console.error(
+        "Erro configuração do site:",
+        error
+      );
+
+      return;
+
+    }
+
+
+    configuracaoSite =
+      data;
+
+
+    if(!data){
+      return;
+    }
+
+
+    const nomeSite =
+      String(
+        data.nome_site ||
+        "Tudo Aqui"
+      ).trim();
+
+
+    document
+      .getElementById(
+        "nomeSite"
+      )
+      .textContent =
+        nomeSite;
+
+
+    document
+      .getElementById(
+        "footerNomeSite"
+      )
+      .textContent =
+        nomeSite;
+
+
+    document
+      .getElementById(
+        "copyrightNomeSite"
+      )
+      .textContent =
+        nomeSite;
+
+
+    const slogan =
+      String(
+        data.slogan ||
+        "Diretório de Empresas Angolanas e Negócios"
+      ).trim();
+
+
+    document
+      .getElementById(
+        "sloganSite"
+      )
+      .textContent =
+        slogan;
+
+
+    document
+      .getElementById(
+        "footerSlogan"
+      )
+      .textContent =
+        slogan;
+
+
+    const logo =
+      construirLogoPublico(
+        data.logo_url
+      );
+
+
+    const container =
+      document.getElementById(
+        "logoSiteContainer"
+      );
+
+
+    if(
+      logo &&
+      container
+    ){
+
+      container.innerHTML = `
+
+        <img
+          src="${escapar(logo)}"
+          alt="${escapar(nomeSite)}"
+          data-original-logo="${escapar(data.logo_url || "")}"
+          data-tentativa="0"
+          onerror="logoSiteErro()"
+        >
+
+      `;
+
+    }
+
+
+  }catch(error){
+
+    console.error(
+      "Erro ao carregar configuração:",
+      error
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   EMPRESA
+========================================================= */
+
+function obterNomeEmpresa(e){
+
+  return String(
+    e?.empresa ||
+    "Empresa"
+  ).trim();
+
+}
+
+
+function obterSetorEmpresa(e){
+
+  return String(
+    e?.setor ||
+    "Empresa"
+  ).trim();
+
+}
+
+
+/* =========================================================
+   LOGO EMPRESA
+========================================================= */
+
+function logoEmpresa(e){
+
+  const logo =
+    obterLogoEmpresa(e);
+
+  const nome =
+    obterNomeEmpresa(e);
+
+  const inicial =
+    nome
+      .charAt(0)
+      .toUpperCase() ||
+    "E";
+
+
+  if(logo){
+
+    return `
+
+      <img
+        class="company-logo"
+        src="${escapar(logo)}"
+        alt="Logotipo de ${escapar(nome)}"
+        loading="lazy"
+        data-original-logo="${escapar(e.logo_url || "")}"
+        data-tentativa="0"
+        onerror="erroLogoEmpresa(this)"
+      >
+
+      <div
+        class="logo-placeholder"
+        style="display:none;"
+      >
+        ${escapar(inicial)}
+      </div>
+
+    `;
+
+  }
+
+
+  return `
+
+    <div class="logo-placeholder">
+      ${escapar(inicial)}
+    </div>
+
+  `;
+
+}
+
+
+/* =========================================================
+   DESTAQUE
+========================================================= */
+
+function empresaEhDestaque(e){
+
+  if(!e){
+    return false;
+  }
+
+
+  const valor =
+    String(
+      e.destaque ?? ""
+    )
+      .toLowerCase()
+      .trim();
+
+
+  const destaqueAtivo =
+    (
+      e.destaque === true ||
+      valor === "true" ||
+      valor === "t" ||
+      valor === "1" ||
+      e.destaque === 1
+    );
+
+
+  if(!destaqueAtivo){
+    return false;
+  }
+
+
+  if(e.destaque_inicio){
+
+    const inicio =
+      new Date(
+        e.destaque_inicio
+      );
+
+
+    if(
+      !isNaN(inicio.getTime()) &&
+      inicio > new Date()
+    ){
+
+      return false;
+
+    }
+
+  }
+
+
+  if(e.destaque_fim){
+
+    const fim =
+      new Date(
+        e.destaque_fim
+      );
+
+
+    if(
+      !isNaN(fim.getTime()) &&
+      fim < new Date()
+    ){
+
+      return false;
+
+    }
+
+  }
+
+
+  return true;
+
+}
+
+
+/* =========================================================
+   CARREGAR EMPRESAS
+========================================================= */
+
+async function carregarEmpresas(){
+
+  const el =
+    document.getElementById(
+      "resultadoEmpresas"
+    );
+
+
+  try{
+
+    const {
+      data,
+      error
+    } = await supabaseClient
+
+      .from("empresas")
+
+      .select(`
+        id,
+        empresa,
+        setor,
+        email,
+        contacto,
+        endereco,
+        logo_url,
+        plano,
+        plano_status,
+        destaque,
+        pagamento_confirmado,
+        pagamento_data,
+        plano_inicio,
+        plano_fim,
+        ativa,
+        destaque_ordem,
+        destaque_inicio,
+        destaque_fim,
+        banner_url,
+        imagem
+      `)
+
+      .eq(
+        "ativa",
+        true
+      )
+
+      .limit(5000);
+
+
+    if(error){
+      throw error;
+    }
+
+
+    empresas =
+      Array.isArray(data)
+        ? data
+        : [];
+
+
+    empresasFiltradas =
+      [...empresas];
+
+
+    mostrarEmpresas(
+      empresasFiltradas
+    );
+
+
+    mostrarDestaques(
+      empresas
+    );
+
+
+    const total =
+      empresas.length;
+
+
+    document
+      .getElementById(
+        "totalEmpresas"
+      )
+      .textContent =
+        total + "+";
+
+
+    document
+      .getElementById(
+        "heroTotalEmpresas"
+      )
+      .textContent =
+        total + "+";
+
+
+  }catch(error){
+
+    console.error(
+      "Erro ao carregar empresas:",
+      error
+    );
+
+
+    el.innerHTML = `
+
+      <div class="error">
+
+        Não foi possível carregar as empresas.
+
+        <br><br>
+
+        Verifique a tabela
+        <strong>empresas</strong>
+        e as políticas públicas do Supabase.
+
+      </div>
+
+    `;
+
+  }
+
+}
+
+
+/* =========================================================
+   MOSTRAR DESTAQUES
+========================================================= */
+
+function mostrarDestaques(lista){
+
+  const el =
+    document.getElementById(
+      "empresasDestaque"
+    );
+
+
+  if(!el){
+    return;
+  }
+
+
+  const destaques =
+    lista
+
+      .filter(e =>
+        e.ativa === true &&
+        empresaEhDestaque(e)
+      )
+
+      .sort((a,b) =>
+        Number(
+          a.destaque_ordem ?? 999
+        )
+        -
+        Number(
+          b.destaque_ordem ?? 999
+        )
+      )
+
+      .slice(0,5);
+
+
+  if(!destaques.length){
+
+    el.innerHTML = `
+
+      <div class="empty">
+
+        Ainda não existem empresas em destaque.
+
+        <br>
+
+        <small>
+          Ative <strong>destaque</strong> na tabela
+          empresas para aparecer aqui.
+        </small>
+
+      </div>
+
+    `;
+
+    return;
+
+  }
+
+
+  el.innerHTML = `
+
+    <div class="featured-grid">
+
+      ${destaques.map(e => {
+
+        const empresaId =
+          String(
+            e.id ?? ""
+          );
+
+
+        const nome =
+          obterNomeEmpresa(e);
+
+
+        const setor =
+          obterSetorEmpresa(e);
+
+
+        const endereco =
+          String(
+            e.endereco ||
+            "Angola"
+          ).trim();
+
+
+        const logo =
+          obterLogoEmpresa(e);
+
+
+        const inicial =
+          nome
+            .charAt(0)
+            .toUpperCase() ||
+          "E";
+
+
+        const logoHTML =
+          logo
+
+            ? `
+
+              <img
+                class="company-logo"
+                src="${escapar(logo)}"
+                alt="Logotipo de ${escapar(nome)}"
+                loading="lazy"
+                data-original-logo="${escapar(e.logo_url || "")}"
+                data-tentativa="0"
+                onerror="erroLogoEmpresa(this)"
+              >
+
+              <div
+                class="logo-placeholder"
+                style="display:none;"
+              >
+                ${escapar(inicial)}
+              </div>
+
+            `
+
+            : `
+
+              <div class="logo-placeholder">
+                ${escapar(inicial)}
+              </div>
+
+            `;
+
+
+        return `
+
+          <div class="featured-card">
+
+            <span class="featured-badge">
+              ⭐ EM DESTAQUE
+            </span>
+
+            ${logoHTML}
+
+            <h3>
+              ${escapar(nome)}
+            </h3>
+
+            <div class="featured-category">
+              ${escapar(setor)}
+            </div>
+
+            <div class="featured-location">
+              📍 ${escapar(endereco)}
+            </div>
+
+            <button
+              class="view-company"
+              data-company-id="${escapar(empresaId)}"
+              onclick="detalhesEmpresaPorId(this.dataset.companyId)"
+            >
+              Ver empresa →
+            </button>
+
+          </div>
+
+        `;
+
+      }).join("")}
+
+    </div>
+
+  `;
+
+}
+
+
+/* =========================================================
+   MOSTRAR EMPRESAS
+========================================================= */
+
+function mostrarEmpresas(lista){
+
+  const el =
+    document.getElementById(
+      "resultadoEmpresas"
+    );
+
+
+  if(!lista.length){
+
+    el.innerHTML = `
+
+      <div class="empty">
+        🔎 Nenhuma empresa encontrada.
+      </div>
+
+    `;
+
+    return;
+
+  }
+
+
+  el.innerHTML = `
+
+    <div class="company-grid">
+
+      ${lista.map(e => {
+
+        const empresaId =
+          String(
+            e.id ?? ""
+          );
+
+
+        const nome =
+          obterNomeEmpresa(e);
+
+
+        const setor =
+          obterSetorEmpresa(e);
+
+
+        const endereco =
+          String(
+            e.endereco ||
+            "Angola"
+          );
+
+
+        const contacto =
+          String(
+            e.contacto ||
+            ""
+          );
+
+
+        const email =
+          String(
+            e.email ||
+            ""
+          );
+
+
+        return `
+
+          <div class="company-card">
+
+            <div class="company-top">
+
+              ${logoEmpresa(e)}
+
+              <div>
+
+                <h3>
+                  ${escapar(nome)}
+                </h3>
+
+                <div class="category-text">
+                  ${escapar(setor)}
+                </div>
+
+              </div>
+
+            </div>
+
+
+            <div class="company-info">
+
+              📍
+              ${escapar(endereco)}
+
+              ${
+                contacto
+                  ? `
+                    <br>
+                    📞
+                    ${escapar(contacto)}
+                  `
+                  : ""
+              }
+
+              ${
+                email
+                  ? `
+                    <br>
+                    ✉️
+                    ${escapar(email)}
+                  `
+                  : ""
+              }
+
+            </div>
+
+
+            ${
+              empresaEhDestaque(e)
+
+                ? `
+
+                  <span class="badge-verified">
+                    ⭐ Empresa em destaque
+                  </span>
+
+                  <br><br>
+
+                `
+
+                : ""
+            }
+
+
+            <button
+              class="view-company"
+              data-company-id="${escapar(empresaId)}"
+              onclick="detalhesEmpresaPorId(this.dataset.companyId)"
+            >
+              VER EMPRESA →
+            </button>
+
+          </div>
+
+        `;
+
+      }).join("")}
+
+    </div>
+
+  `;
+
+}
+
+
+/* =========================================================
+   DETALHE DA EMPRESA
+========================================================= */
+
+async function detalhesEmpresaPorId(id){
+
+  if(
+    id === undefined ||
+    id === null ||
+    String(id).trim() === ""
+  ){
+
+    console.error(
+      "ID da empresa inválido:",
+      id
+    );
+
+    return;
+
+  }
+
+
+  const modal =
+    document.getElementById(
+      "empresaModal"
+    );
+
+
+  const detalhe =
+    document.getElementById(
+      "empresaDetalhe"
+    );
+
+
+  detalhe.innerHTML = `
+
+    <div class="loading">
+      A carregar informações da empresa...
+    </div>
+
+  `;
+
+
+  modal.classList.add("show");
+
+
+  try{
+
+    let empresa =
+      empresas.find(
+        item =>
+          String(item.id) ===
+          String(id)
+      );
+
+
+    if(!empresa){
+
+      const {
+        data,
+        error
+      } = await supabaseClient
+
+        .from("empresas")
+
+        .select("*")
+
+        .eq(
+          "id",
+          id
+        )
+
+        .maybeSingle();
+
+
+      if(error){
+        throw error;
+      }
+
+
+      empresa =
+        data;
+
+    }
+
+
+    if(!empresa){
+
+      detalhe.innerHTML = `
+
+        <div class="error">
+          Empresa não encontrada.
+        </div>
+
+      `;
+
+      return;
+
+    }
+
+
+    if(
+      String(empresa.id) !==
+      String(id)
+    ){
+
+      detalhe.innerHTML = `
+
+        <div class="error">
+
+          Não foi possível confirmar
+          a identificação desta empresa.
+
+        </div>
+
+      `;
+
+      return;
+
+    }
+
+
+    renderizarDetalheEmpresa(
+      empresa
+    );
+
+
+  }catch(error){
+
+    console.error(
+      "Erro ao carregar detalhe:",
+      error
+    );
+
+
+    detalhe.innerHTML = `
+
+      <div class="error">
+
+        Não foi possível carregar
+        os dados desta empresa.
+
+      </div>
+
+    `;
+
+  }
+
+}
+
+
+/* =========================================================
+   DETALHE
+========================================================= */
+
+function renderizarDetalheEmpresa(e){
+
+  const nome =
+    obterNomeEmpresa(e);
+
+
+  const setor =
+    obterSetorEmpresa(e);
+
+
+  const endereco =
+    String(
+      e.endereco ||
+      "Angola"
+    );
+
+
+  const contacto =
+    String(
+      e.contacto ||
+      ""
+    ).trim();
+
+
+  const email =
+    String(
+      e.email ||
+      ""
+    ).trim();
+
+
+  const logo =
+    obterLogoEmpresa(e);
+
+
+  const inicial =
+    nome
+      .charAt(0)
+      .toUpperCase() ||
+    "E";
+
+
+  const logoHTML =
+    logo
+
+      ? `
+
+        <img
+          class="detail-logo"
+          src="${escapar(logo)}"
+          alt="Logotipo de ${escapar(nome)}"
+          data-original-logo="${escapar(e.logo_url || "")}"
+          data-tentativa="0"
+          onerror="erroLogoEmpresa(this)"
+        >
+
+        <div
+          class="detail-placeholder"
+          style="display:none;"
+        >
+          ${escapar(inicial)}
+        </div>
+
+      `
+
+      : `
+
+        <div class="detail-placeholder">
+          ${escapar(inicial)}
+        </div>
+
+      `;
+
+
+  const whatsappNumero =
+    contacto
+      .replace(/\D/g,"")
+      .replace(/^244/,"");
+
+
+  document
+    .getElementById(
+      "empresaDetalhe"
+    )
+    .innerHTML = `
+
+      <div class="detail-header">
+
+        ${logoHTML}
+
+        <div>
+
+          <h2>
+            ${escapar(nome)}
+          </h2>
+
+          <div class="detail-category">
+            ${escapar(setor)}
+          </div>
+
+          ${
+            empresaEhDestaque(e)
+
+              ? `
+
+                <div
+                  style="
+                    margin-top:8px;
+                    display:inline-block;
+                    background:#f7d117;
+                    padding:5px 9px;
+                    border-radius:20px;
+                    font-size:11px;
+                    font-weight:bold;
+                  "
+                >
+                  ⭐ EM DESTAQUE
+                </div>
+
+              `
+
+              : ""
+          }
+
+        </div>
+
+      </div>
+
+
+      <div class="detail-section">
+
+        <h3>
+          📋 Informações
+        </h3>
+
+
+        <div class="detail-row">
+
+          <strong>
+            Empresa:
+          </strong>
+
+          <span>
+            ${escapar(nome)}
+          </span>
+
+        </div>
+
+
+        <div class="detail-row">
+
+          <strong>
+            Setor:
+          </strong>
+
+          <span>
+            ${escapar(setor)}
+          </span>
+
+        </div>
+
+
+        <div class="detail-row">
+
+          <strong>
+            Localização:
+          </strong>
+
+          <span>
+            ${escapar(endereco)}
+          </span>
+
+        </div>
+
+
+        ${
+          contacto
+
+            ? `
+
+              <div class="detail-row">
+
+                <strong>
+                  Contacto:
+                </strong>
+
+                <span>
+                  ${escapar(contacto)}
+                </span>
+
+              </div>
+
+            `
+
+            : ""
+        }
+
+
+        ${
+          email
+
+            ? `
+
+              <div class="detail-row">
+
+                <strong>
+                  E-mail:
+                </strong>
+
+                <span>
+                  ${escapar(email)}
+                </span>
+
+              </div>
+
+            `
+
+            : ""
+        }
+
+      </div>
+
+
+      <div class="detail-section">
+
+        <h3>
+          🏢 Sobre a empresa
+        </h3>
+
+        <p
+          style="
+            line-height:1.7;
+            color:#555;
+          "
+        >
+
+          Empresa cadastrada no
+          Diretório Tudo Aqui.
+
+          <br><br>
+
+          Encontre informações de contacto,
+          localização e setor de atividade
+          desta empresa.
+
+        </p>
+
+      </div>
+
+
+      <div class="detail-actions">
+
+        ${
+          contacto
+
+            ? `
+
+              <a
+                class="action-btn action-red"
+                href="tel:${escapar(contacto)}"
+              >
+                📞 Ligar
+              </a>
+
+            `
+
+            : ""
+        }
+
+
+        ${
+          whatsappNumero
+
+            ? `
+
+              <a
+                class="action-btn action-green"
+                href="https://wa.me/244${escapar(whatsappNumero)}"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                💬 WhatsApp
+              </a>
+
+            `
+
+            : ""
+        }
+
+
+        ${
+          email
+
+            ? `
+
+              <a
+                class="action-btn action-black"
+                href="mailto:${escapar(email)}"
+              >
+                ✉️ E-mail
+              </a>
+
+            `
+
+            : ""
+        }
+
+
+        <button
+          class="action-btn action-yellow"
+          onclick="fecharModal()"
+        >
+          Fechar
+        </button>
+
+      </div>
+
+    `;
+
+}
+
+
+/* =========================================================
+   MODAL
+========================================================= */
+
+function fecharModal(){
+
+  document
+    .getElementById(
+      "empresaModal"
+    )
+    .classList
+    .remove("show");
+
+}
+
+
+document
+  .getElementById(
+    "empresaModal"
+  )
+  .addEventListener(
+    "click",
+    function(event){
+
+      if(
+        event.target === this
+      ){
+
+        fecharModal();
+
+      }
+
+    }
+  );
+
+
+document.addEventListener(
+  "keydown",
+  function(event){
+
+    if(
+      event.key === "Escape"
+    ){
+
+      fecharModal();
+
+    }
+
+  }
+);
+
+
+/* =========================================================
+   PESQUISA
+========================================================= */
+
+function pesquisarEmpresas(){
+
+  const texto =
+    document
+      .getElementById(
+        "empresaPesquisa"
+      )
+      .value
+      .trim()
+      .toLowerCase();
+
+
+  const categoria =
+    document
+      .getElementById(
+        "categoriaFiltro"
+      )
+      .value
+      .trim()
+      .toLowerCase();
+
+
+  empresasFiltradas =
+    empresas.filter(e => {
+
+      const textoEmpresa = (
+
+        String(
+          e.empresa ||
+          ""
+        )
+        + " " +
+
+        String(
+          e.setor ||
+          ""
+        )
+        + " " +
+
+        String(
+          e.contacto ||
+          ""
+        )
+        + " " +
+
+        String(
+          e.email ||
+          ""
+        )
+        + " " +
+
+        String(
+          e.endereco ||
+          ""
+        )
+
+      ).toLowerCase();
+
+
+      const setor =
+        String(
+          e.setor ||
+          ""
+        ).toLowerCase();
+
+
+      const correspondeTexto =
+        !texto ||
+        textoEmpresa.includes(texto);
+
+
+      const correspondeCategoria =
+        !categoria ||
+        setor.includes(categoria);
+
+
+      return (
+        correspondeTexto &&
+        correspondeCategoria
+      );
+
+    });
+
+
+  mostrarEmpresas(
+    empresasFiltradas
+  );
+
+}
+
+
+/* =========================================================
+   CATEGORIA
+========================================================= */
+
+function filtrarCategoria(categoria){
+
+  ir("empresas");
+
+
+  document
+    .getElementById(
+      "categoriaFiltro"
+    )
+    .value =
+      categoria;
+
+
+  pesquisarEmpresas();
+
+}
+
+
+/* =========================================================
+   LIMPAR
+========================================================= */
+
+function limparPesquisa(){
+
+  document
+    .getElementById(
+      "empresaPesquisa"
+    )
+    .value = "";
+
+
+  document
+    .getElementById(
+      "categoriaFiltro"
+    )
+    .value = "";
+
+
+  empresasFiltradas =
+    [...empresas];
+
+
+  mostrarEmpresas(
+    empresasFiltradas
+  );
+
+}
+
+
+/* =========================================================
+   PESQUISA HERO
+========================================================= */
+
+function pesquisarHero(){
+
+  const valor =
+    document
+      .getElementById(
+        "heroSearch"
+      )
+      .value;
+
+
+  document
+    .getElementById(
+      "empresaPesquisa"
+    )
+    .value =
+      valor;
+
+}
+
+
+function executarPesquisa(){
+
+  const valor =
+    document
+      .getElementById(
+        "heroSearch"
+      )
+      .value;
+
+
+  document
+    .getElementById(
+      "empresaPesquisa"
+    )
+    .value =
+      valor;
+
+
+  ir("empresas");
+
+
+  pesquisarEmpresas();
+
+}
+
+
+/* =========================================================
+   NOTÍCIAS
+========================================================= */
+
+async function carregarNoticias(){
+
+  const el =
+    document.getElementById(
+      "listaNoticias"
+    );
+
+
+  try{
+
+    const {
+      data,
+      error
+    } = await supabaseClient
+
+      .from("noticias")
+
+      .select("*")
+
+      .eq(
+        "ativo",
+        true
+      )
+
+      .order(
+        "id",
+        {
+          ascending:false
+        }
+      )
+
+      .limit(6);
+
+
+    if(error){
+      throw error;
+    }
+
+
+    if(!data?.length){
+
+      el.innerHTML = `
+
+        <div class="empty">
+          Nenhuma notícia publicada.
+        </div>
+
+      `;
+
+      return;
+
+    }
+
+
+    el.innerHTML = `
+
+      <div class="news-grid">
+
+        ${data.map(n => `
+
+          <article class="news-card">
+
+            <div class="news-image">
+
+              ${
+                n.imagem
+
+                  ? `
+
+                    <img
+                      src="${escapar(n.imagem)}"
+                      alt="${escapar(
+                        n.titulo ||
+                        "Notícia"
+                      )}"
+                      loading="lazy"
+                    >
+
+                  `
+
+                  : "📰"
+              }
+
+            </div>
+
+            <div class="news-content">
+
+              <div class="news-date">
+                📰 NOTÍCIA
+              </div>
+
+              <h3>
+                ${escapar(
+                  n.titulo ||
+                  "Notícia"
+                )}
+              </h3>
+
+              <p>
+
+                ${escapar(
+                  n.texto || ""
+                ).substring(0,180)}
+
+                ${
+                  n.texto?.length > 180
+                    ? "..."
+                    : ""
+                }
+
+              </p>
+
+              ${
+                n.link
+
+                  ? `
+
+                    <a
+                      href="${escapar(n.link)}"
+                      target="_blank"
+                      rel="noopener"
+                      class="view-company"
+                      style="
+                        text-decoration:none;
+                        display:inline-block;
+                      "
+                    >
+                      Ler notícia →
+                    </a>
+
+                  `
+
+                  : ""
+              }
+
+            </div>
+
+          </article>
+
+        `).join("")}
+
+      </div>
+
+    `;
+
+
+  }catch(error){
+
+    console.error(error);
+
+
+    el.innerHTML = `
+
+      <div class="error">
+        Não foi possível carregar as notícias.
+      </div>
+
+    `;
+
+  }
+
+}
+
+
+/* =========================================================
+   PUBLICIDADE
+========================================================= */
+
+async function carregarPublicidade(){
+
+  const el =
+    document.getElementById(
+      "listaPublicidade"
+    );
+
+
+  try{
+
+    const {
+      data,
+      error
+    } = await supabaseClient
+
+      .from("publicidade")
+
+      .select("*")
+
+      .eq(
+        "ativo",
+        true
+      )
+
+      .order(
+        "posicao",
+        {
+          ascending:true
+        }
+      );
+
+
+    if(error){
+      throw error;
+    }
+
+
+    if(!data?.length){
+
+      el.innerHTML = `
+
+        <div class="empty">
+          Espaço disponível para publicidade.
+        </div>
+
+      `;
+
+      return;
+
+    }
+
+
+    el.innerHTML = `
+
+      <div class="ads-grid">
+
+        ${data.map(p => `
+
+          <div class="ad-card">
+
+            ${
+              p.imagem
+
+                ? (
+
+                    p.link
+
+                      ? `
+
+                        <a
+                          href="${escapar(p.link)}"
+                          target="_blank"
+                          rel="noopener"
+                        >
+
+                          <img
+                            src="${escapar(p.imagem)}"
+                            alt="${escapar(
+                              p.anunciante ||
+                              "Publicidade"
+                            )}"
+                            loading="lazy"
+                          >
+
+                        </a>
+
+                      `
+
+                      : `
+
+                        <img
+                          src="${escapar(p.imagem)}"
+                          alt="Publicidade"
+                          loading="lazy"
+                        >
+
+                      `
+
+                  )
+
+                : ""
+
+            }
+
+            <strong>
+
+              ${escapar(
+                p.anunciante ||
+                "Publicidade"
+              )}
+
+            </strong>
+
+          </div>
+
+        `).join("")}
+
+      </div>
+
+    `;
+
+
+  }catch(error){
+
+    console.error(error);
+
+
+    el.innerHTML = `
+
+      <div class="error">
+        Não foi possível carregar a publicidade.
+      </div>
+
+    `;
+
+  }
+
+}
+
+
+/* =========================================================
+   YOUTUBE
+========================================================= */
+
+function youtubeId(url){
+
+  try{
+
+    const u =
+      new URL(url);
+
+
+    if(
+      u.hostname.includes(
+        "youtu.be"
+      )
+    ){
+
+      return u.pathname.substring(1);
+
+    }
+
+
+    if(
+      u.pathname.startsWith(
+        "/shorts/"
+      )
+    ){
+
+      return u.pathname
+        .split("/shorts/")[1]
+        .split("?")[0];
+
+    }
+
+
+    return (
+
+      u.searchParams.get("v") ||
+
+      u.pathname
+        .split("/embed/")[1] ||
+
+      ""
+
+    );
+
+  }catch{
+
+    return "";
+
+  }
+
+}
+
+
+/* =========================================================
+   VÍDEOS
+========================================================= */
+
+async function carregarVideos(){
+
+  const el =
+    document.getElementById(
+      "listaVideos"
+    );
+
+
+  try{
+
+    const {
+      data,
+      error
+    } = await supabaseClient
+
+      .from("videos")
+
+      .select("*")
+
+      .eq(
+        "ativo",
+        true
+      )
+
+      .order(
+        "id",
+        {
+          ascending:false
+        }
+      )
+
+      .limit(6);
+
+
+    if(error){
+      throw error;
+    }
+
+
+    if(!data?.length){
+
+      el.innerHTML = `
+
+        <div class="empty">
+          Nenhum vídeo publicado.
+        </div>
+
+      `;
+
+      return;
+
+    }
+
+
+    el.innerHTML = `
+
+      <div class="video-grid">
+
+        ${data.map(v => {
+
+          const id =
+            v.video_id ||
+            youtubeId(
+              v.youtube_url ||
+              ""
+            );
+
+
+          return `
+
+            <div class="video-card">
+
+              ${
+                id
+
+                  ? `
+
+                    <iframe
+                      src="https://www.youtube.com/embed/${escapar(id)}"
+                      allowfullscreen
+                      loading="lazy"
+                    ></iframe>
+
+                  `
+
+                  : ""
+
+              }
+
+              <h3>
+
+                ${escapar(
+                  v.titulo ||
+                  "Vídeo em destaque"
+                )}
+
+              </h3>
+
+            </div>
+
+          `;
+
+        }).join("")}
+
+      </div>
+
+    `;
+
+
+  }catch(error){
+
+    console.error(error);
+
+
+    el.innerHTML = `
+
+      <div class="error">
+        Não foi possível carregar os vídeos.
+      </div>
+
+    `;
+
+  }
+
+}
+
+
+/* =========================================================
+   NEWSLETTER
+========================================================= */
+
+async function inscrever(event){
+
+  event.preventDefault();
+
+
+  const email =
+    document
+      .getElementById(
+        "newsletterEmail"
+      )
+      .value
+      .trim()
+      .toLowerCase();
+
+
+  const msg =
+    document.getElementById(
+      "newsletterMsg"
+    );
+
+
+  if(!email){
+    return;
+  }
+
+
+  try{
+
+    const {
+      error
+    } = await supabaseClient
+
+      .from("newsletter")
+
+      .insert([
+        {
+          email:email,
+          ativo:true
+        }
+      ]);
+
+
+    if(error){
+
+      if(
+        error.code ===
+        "23505"
+      ){
+
+        msg.innerHTML = `
+
+          <p style="color:#ce1126;">
+            Este e-mail já está inscrito.
+          </p>
+
+        `;
+
+      }else{
+
+        console.error(
+          "Erro newsletter:",
+          error
+        );
+
+
+        msg.innerHTML = `
+
+          <p style="color:#ce1126;">
+            Não foi possível concluir a inscrição.
+          </p>
+
+        `;
+
+      }
+
+      return;
+
+    }
+
+
+    msg.innerHTML = `
+
+      <p style="color:#16823b;">
+        ✅ Inscrição realizada com sucesso!
+      </p>
+
+    `;
+
+
+    document
+      .getElementById(
+        "newsletterEmail"
+      )
+      .value = "";
+
+
+  }catch(error){
+
+    console.error(
+      "Erro newsletter:",
+      error
+    );
+
+
+    msg.innerHTML = `
+
+      <p style="color:#ce1126;">
+        Ocorreu um erro. Tente novamente.
+      </p>
+
+    `;
+
+  }
+
+}
+
+
+/* =========================================================
+   INICIALIZAÇÃO
+========================================================= */
+
+async function iniciar(){
+
+  console.log(
+    "🚀 Iniciando Tudo Aqui..."
+  );
+
+
+  console.log(
+    "🖼️ Bucket de logotipos:",
+    STORAGE_BUCKET
+  );
+
+
+  await Promise.all([
+
+    carregarConfiguracaoSite(),
+
+    carregarEmpresas(),
+
+    carregarNoticias(),
+
+    carregarPublicidade(),
+
+    carregarVideos()
+
+  ]);
+
+
+  console.log(
+    "✅ Tudo Aqui carregado."
+  );
+
+}
+
+
+iniciar();
+
+</script>
+
+</body>
+</html>
