@@ -1,0 +1,5225 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>TudoAqui — Painel CEO</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+
+*{
+    box-sizing:border-box
+}
+
+body{
+    margin:0;
+    font-family:Arial,Helvetica,sans-serif;
+    background:#f4f6f8;
+    color:#17202a
+}
+
+header{
+    background:#111827;
+    color:white;
+    padding:15px 20px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    position:sticky;
+    top:0;
+    z-index:1000;
+    box-shadow:0 2px 8px rgba(0,0,0,.15)
+}
+
+header h1{
+    margin:0;
+    font-size:20px
+}
+
+.container{
+    max-width:1250px;
+    margin:auto;
+    padding:20px
+}
+
+.card{
+    background:white;
+    padding:20px;
+    margin-bottom:20px;
+    border-radius:14px;
+    box-shadow:0 2px 10px rgba(0,0,0,.07)
+}
+
+.card h2,
+.card h3{
+    margin-top:0
+}
+
+input,
+select,
+textarea{
+    width:100%;
+    padding:12px;
+    margin:6px 0;
+    border:1px solid #d8dde3;
+    border-radius:8px;
+    font-size:15px;
+    background:white
+}
+
+textarea{
+    min-height:130px;
+    resize:vertical
+}
+
+button{
+    padding:11px 17px;
+    border:0;
+    border-radius:8px;
+    background:#111827;
+    color:white;
+    cursor:pointer;
+    margin:5px 4px 5px 0;
+    font-size:14px
+}
+
+button:hover{
+    opacity:.9
+}
+
+.btn-primary{
+    background:#2563eb
+}
+
+.btn-success{
+    background:#16a34a
+}
+
+.btn-warning{
+    background:#d97706
+}
+
+.btn-danger,
+.logout{
+    background:#dc2626
+}
+
+.btn-secondary{
+    background:#64748b
+}
+
+.hidden{
+    display:none!important
+}
+
+.status{
+    padding:12px;
+    background:#eef2ff;
+    border-radius:8px;
+    margin:10px 0
+}
+
+.status.success{
+    background:#dcfce7;
+    color:#166534
+}
+
+.status.error{
+    background:#fee2e2;
+    color:#991b1b
+}
+
+.status.warning{
+    background:#fef3c7;
+    color:#92400e
+}
+
+.admin-modules{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    margin-bottom:20px
+}
+
+.admin-modules button{
+    margin:0;
+    background:#111827
+}
+
+.admin-modules button.active{
+    background:#2563eb
+}
+
+.admin-tab{
+    margin-bottom:20px
+}
+
+.admin-stats{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:12px
+}
+
+.admin-stat{
+    background:#f3f4f6;
+    border-radius:12px;
+    padding:18px;
+    text-align:center
+}
+
+.admin-stat strong{
+    display:block;
+    font-size:28px
+}
+
+.admin-stat span{
+    display:block;
+    margin-top:5px;
+    color:#555
+}
+
+.grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:10px
+}
+
+.grid-3{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:15px
+}
+
+.table-wrap{
+    overflow-x:auto
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:15px
+}
+
+th,
+td{
+    padding:10px;
+    border-bottom:1px solid #ddd;
+    text-align:left;
+    vertical-align:middle
+}
+
+th{
+    background:#f3f4f6
+}
+
+.logo-preview{
+    width:110px;
+    height:110px;
+    border:2px dashed #cbd5e1;
+    border-radius:12px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    overflow:hidden;
+    background:#f8fafc;
+    margin:10px 0
+}
+
+.logo-preview img{
+    width:100%;
+    height:100%;
+    object-fit:contain
+}
+
+.company-logo{
+    width:55px;
+    height:55px;
+    border-radius:8px;
+    border:1px solid #ddd;
+    object-fit:contain;
+    background:white
+}
+
+.no-logo{
+    width:55px;
+    height:55px;
+    border-radius:8px;
+    background:#f1f5f9;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:22px
+}
+
+.company-card{
+    border:1px solid #e5e7eb;
+    border-radius:12px;
+    padding:15px;
+    margin-top:10px;
+    background:white
+}
+
+.badge{
+    display:inline-block;
+    padding:5px 9px;
+    border-radius:20px;
+    font-size:12px;
+    background:#e5e7eb;
+    margin:2px
+}
+
+.badge-green{
+    background:#dcfce7;
+    color:#166534
+}
+
+.badge-blue{
+    background:#dbeafe;
+    color:#1e40af
+}
+
+.badge-yellow{
+    background:#fef3c7;
+    color:#92400e
+}
+
+.badge-red{
+    background:#fee2e2;
+    color:#991b1b
+}
+
+.popup-preview{
+    border:1px solid #ddd;
+    border-radius:12px;
+    padding:15px;
+    background:#fff;
+    margin-top:10px
+}
+
+.popup-image{
+    width:100%;
+    max-height:180px;
+    object-fit:cover;
+    border-radius:8px
+}
+
+.plan-card{
+    border:1px solid #ddd;
+    border-radius:12px;
+    padding:18px;
+    background:white
+}
+
+.plan-card h3{
+    margin:0 0 10px
+}
+
+.price{
+    font-size:25px;
+    font-weight:bold
+}
+
+.file-box{
+    border:2px dashed #cbd5e1;
+    border-radius:10px;
+    padding:15px;
+    text-align:center;
+    background:#f8fafc;
+    margin-top:10px
+}
+
+.file-box input{
+    border:0;
+    padding:5px
+}
+
+.featured-actions{
+    display:flex;
+    flex-wrap:wrap;
+    gap:5px;
+    align-items:center
+}
+
+.featured-company-top{
+    display:flex;
+    align-items:center;
+    gap:15px;
+    flex:1;
+    min-width:250px
+}
+
+.featured-logo{
+    width:75px;
+    height:75px;
+    border-radius:12px;
+    border:1px solid #ddd;
+    object-fit:contain;
+    background:white
+}
+
+.featured-no-logo{
+    width:75px;
+    height:75px;
+    border-radius:12px;
+    background:#f1f5f9;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:30px;
+    border:1px solid #ddd
+}
+
+@media(max-width:900px){
+
+    .admin-stats{
+        grid-template-columns:repeat(2,1fr)
+    }
+
+    .grid-3{
+        grid-template-columns:1fr 1fr
+    }
+
+}
+
+@media(max-width:700px){
+
+    header{
+        padding:12px
+    }
+
+    header h1{
+        font-size:17px
+    }
+
+    .container{
+        padding:10px
+    }
+
+    .grid,
+    .grid-3{
+        grid-template-columns:1fr
+    }
+
+    .admin-modules{
+        display:grid;
+        grid-template-columns:1fr 1fr
+    }
+
+    .admin-modules button{
+        width:100%
+    }
+
+    .admin-stats{
+        grid-template-columns:1fr 1fr
+    }
+
+    table{
+        min-width:850px
+    }
+
+    .featured-company-top{
+        min-width:100%
+    }
+
+}
+
+</style>
+</head>
+
+<body>
+
+<header>
+
+<h1>🇦🇴 TudoAqui — CEO</h1>
+
+<button
+    id="logout"
+    class="logout hidden">
+    Sair
+</button>
+
+</header>
+
+
+<div class="container">
+
+
+<!-- =====================================================
+     LOGIN
+===================================================== -->
+
+<div
+    id="loginBox"
+    class="card">
+
+<h2>🔐 Entrar no CEO</h2>
+
+<input
+    id="email"
+    type="email"
+    placeholder="E-mail">
+
+<input
+    id="password"
+    type="password"
+    placeholder="Palavra-passe">
+
+<button
+    class="btn-primary"
+    onclick="login()">
+    Entrar
+</button>
+
+<div
+    id="loginStatus"
+    class="status">
+</div>
+
+</div>
+
+
+<!-- =====================================================
+     DASHBOARD
+===================================================== -->
+
+<div
+    id="dashboard"
+    class="hidden">
+
+
+<div
+    id="adminModules"
+    class="admin-modules">
+
+<button
+    id="btnDashboard"
+    onclick="openAdminTab('mainAdminTab',this)">
+    📊 Dashboard
+</button>
+
+<button
+    onclick="openAdminTab('brandTab',this)">
+    🖼️ Marca & Destaques
+</button>
+
+<button
+    onclick="openAdminTab('companiesTab',this)">
+    🏢 Empresas
+</button>
+
+<button
+    onclick="openAdminTab('plansTab',this)">
+    💳 Planos
+</button>
+
+<button
+    onclick="openAdminTab('paymentsTab',this)">
+    💰 Pagamentos
+</button>
+
+<button
+    onclick="openAdminTab('popupsTab',this)">
+    🪟 Popups
+</button>
+
+<button
+    onclick="openAdminTab('marketingTab',this)">
+    📧 E-mail Marketing
+</button>
+
+<button
+    onclick="openAdminTab('newsTab',this)">
+    📰 Notícias
+</button>
+
+<button
+    onclick="openAdminTab('adsTab',this)">
+    📢 Publicidade
+</button>
+
+</div>
+
+
+<!-- =====================================================
+     DASHBOARD PRINCIPAL
+===================================================== -->
+
+<div
+    id="mainAdminTab"
+    class="admin-tab">
+
+<div class="card">
+
+<h2>📊 Visão geral</h2>
+
+<div class="admin-stats">
+
+<div class="admin-stat">
+<strong id="adminCompanyCount">0</strong>
+<span>Empresas</span>
+</div>
+
+<div class="admin-stat">
+<strong id="adminSubscriberCount">0</strong>
+<span>Inscritos</span>
+</div>
+
+<div class="admin-stat">
+<strong id="adminCampaignCount">0</strong>
+<span>Campanhas</span>
+</div>
+
+<div class="admin-stat">
+<strong id="adminFeaturedCount">0</strong>
+<span>Em destaque</span>
+</div>
+
+</div>
+
+<div
+    id="adminOverviewStatus"
+    class="status">
+    Painel administrativo ativo.
+</div>
+
+</div>
+
+
+<div class="card">
+
+<h2>🔌 Ligação</h2>
+
+<div
+    id="connection"
+    class="status">
+    A ligar ao Supabase...
+</div>
+
+<button
+    class="btn-primary"
+    onclick="refreshEverything()">
+    🔄 Atualizar dados
+</button>
+
+</div>
+
+</div>
+
+
+<!-- =====================================================
+     MARCA & DESTAQUES
+===================================================== -->
+
+<div
+    id="brandTab"
+    class="admin-tab hidden">
+
+
+<!-- LOGO DO DIRETÓRIO -->
+
+<div class="card">
+
+<h2>🖼️ Logotipo do Diretório</h2>
+
+<p>
+O logotipo principal do TudoAqui pode ser carregado diretamente do computador.
+</p>
+
+<div
+    id="siteLogoPreview"
+    class="logo-preview">
+    🇦🇴
+</div>
+
+<input
+    id="siteLogoFile"
+    type="file"
+    accept="image/png,image/jpeg,image/webp,image/jfif">
+
+<button
+    class="btn-primary"
+    onclick="uploadSiteLogo()">
+    ⬆️ Carregar logotipo
+</button>
+
+<button
+    class="btn-danger"
+    onclick="removeSiteLogo()">
+    🗑️ Remover logotipo
+</button>
+
+<div
+    id="siteLogoStatus"
+    class="status">
+    Nenhum logotipo carregado.
+</div>
+
+</div>
+
+
+<!-- EMPRESAS EM DESTAQUE -->
+
+<div class="card">
+
+<h2>⭐ Empresas em Destaque</h2>
+
+<p>
+Escolha as empresas que aparecerão na área de destaque.
+</p>
+
+<input
+    id="featuredSearch"
+    placeholder="Pesquisar empresa..."
+    oninput="filterFeaturedCompanies()">
+
+<div
+    id="featuredCompanies">
+</div>
+
+<div
+    id="featuredStatus"
+    class="status">
+    A carregar...
+</div>
+
+</div>
+
+</div>
+
+
+<!-- =====================================================
+     EMPRESAS
+===================================================== -->
+
+<div
+    id="companiesTab"
+    class="admin-tab hidden">
+
+<div class="card">
+
+<h2>🏢 Adicionar empresa</h2>
+
+<div class="grid">
+
+<input
+    id="empresa"
+    placeholder="Nome da empresa">
+
+<input
+    id="setor"
+    placeholder="Setor">
+
+<input
+    id="emailEmpresa"
+    placeholder="E-mail">
+
+<input
+    id="contato"
+    placeholder="Contato">
+
+<input
+    id="endereco"
+    placeholder="Endereço">
+
+</div>
+
+<div class="file-box">
+
+<strong>🖼️ Logotipo</strong>
+
+<input
+    id="newCompanyLogo"
+    type="file"
+    accept="image/png,image/jpeg,image/webp,image/jfif">
+
+</div>
+
+<button
+    class="btn-success"
+    onclick="addCompany()">
+    ➕ Adicionar empresa
+</button>
+
+<div
+    id="addStatus"
+    class="status">
+</div>
+
+</div>
+
+
+<div class="card">
+
+<h2>🔎 Empresas</h2>
+
+<input
+    id="search"
+    placeholder="Pesquisar empresa..."
+    oninput="searchCompanies()">
+
+<div class="table-wrap">
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>Logo</th>
+<th>Empresa</th>
+<th>Setor</th>
+<th>E-mail</th>
+<th>Contato</th>
+<th>Plano</th>
+<th>Destaque</th>
+<th>Estado</th>
+<th>Ação</th>
+
+</tr>
+
+</thead>
+
+<tbody id="companies">
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- =====================================================
+     PLANOS
+===================================================== -->
+
+<div
+    id="plansTab"
+    class="admin-tab hidden">
+
+<div class="card">
+
+<h2>💳 Planos das Empresas</h2>
+
+<div class="grid-3">
+
+<div class="plan-card">
+
+<h3>Grátis</h3>
+
+<div class="price">
+0 AOA
+</div>
+
+<p>3650 dias</p>
+
+<span class="badge">
+Sem logotipo
+</span>
+
+<span class="badge">
+Sem destaque
+</span>
+
+</div>
+
+
+<div class="plan-card">
+
+<h3>Básico</h3>
+
+<div class="price">
+15.000 AOA
+</div>
+
+<p>30 dias</p>
+
+<span class="badge badge-green">
+Logotipo
+</span>
+
+<span class="badge badge-green">
+Destaque
+</span>
+
+</div>
+
+
+<div class="plan-card">
+
+<h3>Premium</h3>
+
+<div class="price">
+30.000 AOA
+</div>
+
+<p>30 dias</p>
+
+<span class="badge badge-blue">
+Logotipo
+</span>
+
+<span class="badge badge-blue">
+Destaque
+</span>
+
+</div>
+
+</div>
+
+</div>
+
+
+<div class="card">
+
+<h3>Empresas e respetivos planos</h3>
+
+<div class="table-wrap">
+
+<table>
+
+<thead>
+
+<tr>
+<th>Empresa</th>
+<th>Plano</th>
+<th>Estado</th>
+<th>Pagamento</th>
+<th>Logotipo</th>
+<th>Destaque</th>
+</tr>
+
+</thead>
+
+<tbody id="plansCompanyList">
+</tbody>
+
+</table>
+
+</div>
+
+<div
+    id="plansStatus"
+    class="status">
+</div>
+
+</div>
+
+</div>
+
+
+<!-- =====================================================
+     PAGAMENTOS
+===================================================== -->
+
+<div
+    id="paymentsTab"
+    class="admin-tab hidden">
+
+<div class="card">
+
+<h2>💰 Pagamentos</h2>
+
+<p>
+Área para verificar e confirmar pagamentos das empresas.
+</p>
+
+<div class="table-wrap">
+
+<table>
+
+<thead>
+
+<tr>
+<th>Empresa</th>
+<th>Plano</th>
+<th>Valor</th>
+<th>Estado</th>
+<th>Ação</th>
+</tr>
+
+</thead>
+
+<tbody id="paymentsList">
+</tbody>
+
+</table>
+
+</div>
+
+<div
+    id="paymentsStatus"
+    class="status">
+</div>
+
+</div>
+
+</div>
+
+
+<!-- =====================================================
+     POPUPS
+===================================================== -->
+
+<div
+    id="popupsTab"
+    class="admin-tab hidden">
+
+<div class="card">
+
+<h2>🪟 Gestão de Popups</h2>
+
+<p>
+Crie e edite as janelas promocionais que aparecem no site público.
+</p>
+
+<input
+    id="popupId"
+    type="hidden">
+
+<input
+    id="popupTitle"
+    placeholder="Título do popup">
+
+<textarea
+    id="popupContent"
+    placeholder="Texto do popup">
+</textarea>
+
+<input
+    id="popupButton"
+    placeholder="Texto do botão">
+
+<input
+    id="popupLink"
+    placeholder="Link do botão">
+
+<select id="popupPosition">
+
+<option value="center">
+Centro
+</option>
+
+<option value="top">
+Topo
+</option>
+
+<option value="bottom">
+Rodapé
+</option>
+
+</select>
+
+<label>
+
+<input
+    id="popupActive"
+    type="checkbox"
+    style="width:auto">
+
+Popup ativo
+
+</label>
+
+<div class="file-box">
+
+<strong>🖼️ Imagem do popup</strong>
+
+<input
+    id="popupImage"
+    type="file"
+    accept="image/png,image/jpeg,image/webp">
+
+</div>
+
+<button
+    class="btn-success"
+    onclick="savePopup()">
+    💾 Guardar popup
+</button>
+
+<button
+    class="btn-secondary"
+    onclick="clearPopupForm()">
+    Limpar
+</button>
+
+<div
+    id="popupStatus"
+    class="status">
+</div>
+
+</div>
+
+
+<div class="card">
+
+<h3>Popups existentes</h3>
+
+<div
+    id="popupList">
+</div>
+
+</div>
+
+</div>
+
+
+<!-- =====================================================
+     MARKETING
+===================================================== -->
+
+<div
+    id="marketingTab"
+    class="admin-tab hidden">
+
+<div class="card">
+
+<h2>📧 E-mail Marketing</h2>
+
+<input
+    id="marketingSubject"
+    placeholder="Assunto da campanha">
+
+<textarea
+    id="marketingBody"
+    placeholder="Mensagem">
+</textarea>
+
+<button
+    class="btn-success"
+    onclick="createCampaign()">
+    💾 Guardar campanha
+</button>
+
+<div
+    id="marketingStatus"
+    class="status">
+</div>
+
+</div>
+
+
+<div class="card">
+
+<h3>Campanhas guardadas</h3>
+
+<div class="table-wrap">
+
+<table>
+
+<thead>
+
+<tr>
+<th>Assunto</th>
+<th>Data</th>
+<th>Ação</th>
+</tr>
+
+</thead>
+
+<tbody id="campaignList">
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- =====================================================
+     NOTÍCIAS
+===================================================== -->
+
+<div
+    id="newsTab"
+    class="admin-tab hidden">
+
+<div class="card">
+
+<h2>📰 Notícias</h2>
+
+<input
+    id="newsTitleAdmin"
+    placeholder="Título da notícia">
+
+<textarea
+    id="newsBodyAdmin"
+    placeholder="Conteúdo da notícia">
+</textarea>
+
+<button
+    class="btn-success"
+    onclick="saveAdminPlaceholder(
+        'newsStatusAdmin',
+        'Área de notícias preparada para ligação à tabela de notícias.'
+    )">
+    💾 Guardar notícia
+</button>
+
+<div
+    id="newsStatusAdmin"
+    class="status">
+</div>
+
+</div>
+
+</div>
+
+
+<!-- =====================================================
+     PUBLICIDADE
+===================================================== -->
+
+<div
+    id="adsTab"
+    class="admin-tab hidden">
+
+<div class="card">
+
+<h2>📢 Publicidade</h2>
+
+<input
+    id="adNameAdmin"
+    placeholder="Nome da campanha/banner">
+
+<input
+    id="adUrlAdmin"
+    placeholder="URL do banner">
+
+<button
+    class="btn-success"
+    onclick="saveAdminPlaceholder(
+        'adsStatusAdmin',
+        'Publicidade guardada como configuração.'
+    )">
+    💾 Guardar publicidade
+</button>
+
+<div
+    id="adsStatusAdmin"
+    class="status">
+</div>
+
+</div>
+
+</div>
+
+
+</div>
+
+</div>
+
+
+<script>
+
+/* =========================================================
+   SUPABASE
+========================================================= */
+
+const SUPABASE_URL =
+"https://earucsaqqtbllnqsxvlb.supabase.co";
+
+const SUPABASE_KEY =
+"sb_publishable_npmGIVLGfRsF8L9UINRnrA_9yqmA7UK";
+
+const supabaseClient =
+window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+);
+
+
+/* =========================================================
+   BUCKET CORRETO DAS EMPRESAS
+========================================================= */
+
+const COMPANY_BUCKET =
+"empresas-imagens";
+
+
+/* =========================================================
+   VARIÁVEIS
+========================================================= */
+
+let companies = [];
+
+let plans = [];
+
+let popups = [];
+
+let siteLogoUrl = null;
+
+
+/* =========================================================
+   FUNÇÕES AUXILIARES
+========================================================= */
+
+function escapeHTML(value){
+
+    return String(value ?? "")
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
+}
+
+
+function companyName(c){
+    return c.empresa || "";
+}
+
+
+function companySector(c){
+    return c.setor || "";
+}
+
+
+function companyEmail(c){
+    return c.email || "";
+}
+
+
+function companyContact(c){
+    return c.contacto || "";
+}
+
+
+function companyAddress(c){
+    return c.endereco || "";
+}
+
+
+function companyLogo(c){
+    return c.logo_url || null;
+}
+
+
+function companyPlan(c){
+    return c.plano || "gratis";
+}
+
+
+function companyFeatured(c){
+    return Boolean(c.destaque);
+}
+
+
+function companyPayment(c){
+    return Boolean(c.pagamento_confirmado);
+}
+
+
+function companyActive(c){
+    return c.ativa !== false;
+}
+
+
+function setStatus(
+    id,
+    message,
+    type=""
+){
+
+    const el =
+        document.getElementById(id);
+
+    if(!el) return;
+
+    el.innerText = message;
+
+    el.className =
+        "status " + type;
+}
+
+
+/* =========================================================
+   LOGIN
+========================================================= */
+
+async function login(){
+
+    const email =
+        document.getElementById("email")
+        .value
+        .trim();
+
+    const password =
+        document.getElementById("password")
+        .value;
+
+    if(!email || !password){
+
+        setStatus(
+            "loginStatus",
+            "Preencha o e-mail e a palavra-passe.",
+            "warning"
+        );
+
+        return;
+    }
+
+    setStatus(
+        "loginStatus",
+        "A entrar..."
+    );
+
+    const {error} =
+        await supabaseClient
+        .auth
+        .signInWithPassword({
+            email,
+            password
+        });
+
+    if(error){
+
+        setStatus(
+            "loginStatus",
+            "Erro: " + error.message,
+            "error"
+        );
+
+        return;
+    }
+
+    setStatus(
+        "loginStatus",
+        "Login realizado.",
+        "success"
+    );
+
+    showDashboard();
+}
+
+
+function showDashboard(){
+
+    document
+        .getElementById("loginBox")
+        ?.classList
+        .add("hidden");
+
+    document
+        .getElementById("dashboard")
+        ?.classList
+        .remove("hidden");
+
+    document
+        .getElementById("logout")
+        ?.classList
+        .remove("hidden");
+
+    openAdminTab(
+        "mainAdminTab",
+        document.getElementById("btnDashboard")
+    );
+
+    refreshEverything();
+}
+
+
+async function logout(){
+
+    await supabaseClient
+        .auth
+        .signOut();
+
+    document
+        .getElementById("dashboard")
+        ?.classList
+        .add("hidden");
+
+    document
+        .getElementById("loginBox")
+        ?.classList
+        .remove("hidden");
+
+    document
+        .getElementById("logout")
+        ?.classList
+        .add("hidden");
+}
+
+
+document
+    .getElementById("logout")
+    ?.addEventListener(
+        "click",
+        logout
+    );
+
+
+/* =========================================================
+   ABAS
+========================================================= */
+
+function openAdminTab(
+    id,
+    button
+){
+
+    document
+        .querySelectorAll(".admin-tab")
+        .forEach(tab =>
+            tab.classList.add("hidden")
+        );
+
+    document
+        .querySelectorAll(".admin-modules button")
+        .forEach(btn =>
+            btn.classList.remove("active")
+        );
+
+    const target =
+        document.getElementById(id);
+
+    if(target){
+        target.classList.remove("hidden");
+    }
+
+    if(button){
+        button.classList.add("active");
+    }
+
+
+    if(id === "brandTab"){
+
+        loadSiteLogo();
+
+        loadFeaturedCompanies();
+    }
+
+
+    if(id === "plansTab"){
+
+        loadPlans();
+
+        loadPlanCompanies();
+    }
+
+
+    if(id === "paymentsTab"){
+
+        loadPayments();
+    }
+
+
+    if(id === "popupsTab"){
+
+        loadPopups();
+    }
+
+
+    if(id === "marketingTab"){
+
+        loadCampaigns();
+    }
+
+}
+
+
+/* =========================================================
+   CARREGAR EMPRESAS
+========================================================= */
+
+async function loadCompanies(){
+
+    setStatus(
+        "connection",
+        "A carregar empresas..."
+    );
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient
+        .from("empresas")
+        .select("*")
+        .order(
+            "id",
+            {
+                ascending:true
+            }
+        );
+
+
+    if(error){
+
+        setStatus(
+            "connection",
+            "Erro ao carregar empresas: " +
+            error.message,
+            "error"
+        );
+
+        console.error(error);
+
+        return;
+    }
+
+
+    companies =
+        Array.isArray(data)
+        ? data
+        : [];
+
+
+    setStatus(
+        "connection",
+        "✅ Supabase sincronizado — " +
+        companies.length +
+        " empresas.",
+        "success"
+    );
+
+
+    displayCompanies(
+        companies
+    );
+
+
+    updateAdminStats();
+}
+
+
+/* =========================================================
+   TABELA DE EMPRESAS
+========================================================= */
+
+function displayCompanies(list){
+
+    const table =
+        document.getElementById(
+            "companies"
+        );
+
+    if(!table) return;
+
+    table.innerHTML = "";
+
+
+    if(!list.length){
+
+        table.innerHTML =
+            `
+            <tr>
+            <td colspan="9">
+            Nenhuma empresa encontrada.
+            </td>
+            </tr>
+            `;
+
+        return;
+    }
+
+
+    list.forEach(company => {
+
+        const id =
+            company.id;
+
+        const logo =
+            companyLogo(company);
+
+        const plan =
+            companyPlan(company);
+
+        const featured =
+            companyFeatured(company);
+
+        const active =
+            companyActive(company);
+
+
+        const row =
+            document.createElement("tr");
+
+
+        row.innerHTML = `
+
+<td>
+
+${
+logo
+?
+`
+<img
+    src="${escapeHTML(logo)}"
+    class="company-logo"
+    alt="Logo">
+`
+:
+`
+<div class="no-logo">
+🏢
+</div>
+`
+}
+
+</td>
+
+
+<td>
+<strong>
+${escapeHTML(companyName(company))}
+</strong>
+</td>
+
+
+<td>
+${escapeHTML(companySector(company))}
+</td>
+
+
+<td>
+${escapeHTML(companyEmail(company))}
+</td>
+
+
+<td>
+${escapeHTML(companyContact(company))}
+</td>
+
+
+<td>
+<span class="badge badge-blue">
+${escapeHTML(plan)}
+</span>
+</td>
+
+
+<td>
+
+${
+featured
+?
+`
+<span class="badge badge-yellow">
+⭐ Sim
+</span>
+`
+:
+`
+<span class="badge">
+Não
+</span>
+`
+}
+
+</td>
+
+
+<td>
+
+${
+active
+?
+`
+<span class="badge badge-green">
+Ativa
+</span>
+`
+:
+`
+<span class="badge badge-red">
+Inativa
+</span>
+`
+}
+
+</td>
+
+
+<td>
+
+<button
+    class="btn-primary"
+    onclick="manageCompanyLogo(${JSON.stringify(id)})">
+    🖼️ Logo
+</button>
+
+
+<button
+    class="${featured ? "btn-warning":"btn-success"}"
+    onclick="toggleFeatured(${JSON.stringify(id)})">
+
+${
+featured
+?
+"⭐ Retirar"
+:
+"⭐ Destaque"
+}
+
+</button>
+
+
+<button
+    class="${active ? "btn-warning":"btn-success"}"
+    onclick="toggleCompanyActive(${JSON.stringify(id)})">
+
+${
+active
+?
+"Desativar"
+:
+"Ativar"
+}
+
+</button>
+
+
+<button
+    class="btn-danger"
+    onclick="deleteCompany(${JSON.stringify(id)})">
+    Apagar
+</button>
+
+</td>
+
+`;
+
+
+        table.appendChild(row);
+
+    });
+
+}
+
+
+/* =========================================================
+   PESQUISA
+========================================================= */
+
+function searchCompanies(){
+
+    const searchValue =
+        (
+            document.getElementById("search")
+            ?.value || ""
+        )
+        .trim()
+        .toLowerCase();
+
+
+    if(!searchValue){
+
+        displayCompanies(
+            companies
+        );
+
+        return;
+    }
+
+
+    const filtered =
+        companies.filter(company => {
+
+            const text = [
+
+                company.empresa,
+                company.setor,
+                company.email,
+                company.contacto,
+                company.endereco,
+                company.plano
+
+            ]
+            .map(v =>
+                String(v ?? "")
+                .toLowerCase()
+            )
+            .join(" ");
+
+
+            return text.includes(
+                searchValue
+            );
+
+        });
+
+
+    displayCompanies(
+        filtered
+    );
+
+}
+
+
+/* =========================================================
+   ADICIONAR EMPRESA
+========================================================= */
+
+async function addCompany(){
+
+    const empresa =
+        document.getElementById("empresa")
+        .value
+        .trim();
+
+    const setor =
+        document.getElementById("setor")
+        .value
+        .trim();
+
+    const email =
+        document.getElementById("emailEmpresa")
+        .value
+        .trim();
+
+    const contacto =
+        document.getElementById("contato")
+        .value
+        .trim();
+
+    const endereco =
+        document.getElementById("endereco")
+        .value
+        .trim();
+
+
+    if(!empresa){
+
+        setStatus(
+            "addStatus",
+            "Digite o nome da empresa.",
+            "warning"
+        );
+
+        return;
+    }
+
+
+    setStatus(
+        "addStatus",
+        "A guardar..."
+    );
+
+
+    const payload = {
+
+        empresa,
+
+        setor,
+
+        email,
+
+        contacto,
+
+        endereco,
+
+        plano:"gratis",
+
+        plano_status:"ativo",
+
+        destaque:false,
+
+        destaque_ordem:null,
+
+        pagamento_confirmado:false,
+
+        ativa:true
+
+    };
+
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient
+        .from("empresas")
+        .insert(payload)
+        .select()
+        .single();
+
+
+    if(error){
+
+        setStatus(
+            "addStatus",
+            "Erro: " +
+            error.message,
+            "error"
+        );
+
+        console.error(error);
+
+        return;
+    }
+
+
+    const logoFile =
+        document
+        .getElementById("newCompanyLogo")
+        ?.files?.[0];
+
+
+    if(
+        logoFile &&
+        data?.id
+    ){
+
+        try{
+
+            await uploadCompanyLogo(
+                data.id,
+                logoFile,
+                false
+            );
+
+        }catch(error){
+
+            setStatus(
+                "addStatus",
+                "Empresa criada, mas o logotipo falhou: " +
+                error.message,
+                "warning"
+            );
+
+            await loadCompanies();
+
+            return;
+        }
+    }
+
+
+    setStatus(
+        "addStatus",
+        "✅ Empresa adicionada com sucesso.",
+        "success"
+    );
+
+
+    [
+        "empresa",
+        "setor",
+        "emailEmpresa",
+        "contato",
+        "endereco"
+    ]
+    .forEach(id => {
+
+        const el =
+            document.getElementById(id);
+
+        if(el){
+            el.value = "";
+        }
+
+    });
+
+
+    const file =
+        document.getElementById(
+            "newCompanyLogo"
+        );
+
+    if(file){
+        file.value = "";
+    }
+
+
+    await loadCompanies();
+
+}
+
+
+/* =========================================================
+   APAGAR EMPRESA
+========================================================= */
+
+async function deleteCompany(id){
+
+    if(
+        !confirm(
+            "Tem certeza que deseja apagar esta empresa?"
+        )
+    ){
+        return;
+    }
+
+
+    const {error} =
+        await supabaseClient
+        .from("empresas")
+        .delete()
+        .eq("id",id);
+
+
+    if(error){
+
+        alert(
+            "Erro ao apagar: " +
+            error.message
+        );
+
+        return;
+    }
+
+
+    await loadCompanies();
+
+}
+
+
+/* =========================================================
+   ATIVAR / DESATIVAR
+========================================================= */
+
+async function toggleCompanyActive(id){
+
+    const company =
+        companies.find(
+            c =>
+                String(c.id) ===
+                String(id)
+        );
+
+
+    if(!company) return;
+
+
+    const newValue =
+        !companyActive(company);
+
+
+    const {error} =
+        await supabaseClient
+        .from("empresas")
+        .update({
+            ativa:newValue
+        })
+        .eq("id",id);
+
+
+    if(error){
+
+        alert(
+            "Erro: " +
+            error.message
+        );
+
+        return;
+    }
+
+
+    await loadCompanies();
+
+}
+
+
+/* =========================================================
+   UPLOAD STORAGE
+   BUCKET: empresas-imagens
+========================================================= */
+
+async function uploadToStorage(
+    file,
+    folder
+){
+
+    if(!file){
+
+        throw new Error(
+            "Nenhum ficheiro selecionado."
+        );
+
+    }
+
+
+    if(
+        file.size >
+        5 * 1024 * 1024
+    ){
+
+        throw new Error(
+            "A imagem não pode ultrapassar 5 MB."
+        );
+
+    }
+
+
+    let extension =
+        file.name
+        .split(".")
+        .pop()
+        .toLowerCase();
+
+
+    const allowed = [
+
+        "png",
+        "jpg",
+        "jpeg",
+        "webp",
+        "jfif"
+
+    ];
+
+
+    if(
+        !allowed.includes(extension)
+    ){
+
+        throw new Error(
+            "Formato não permitido. Use PNG, JPG, JPEG, WEBP ou JFIF."
+        );
+
+    }
+
+
+    const filename =
+
+        folder +
+        "/" +
+        Date.now() +
+        "_" +
+        Math.random()
+        .toString(36)
+        .substring(2,8) +
+        "." +
+        extension;
+
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient
+        .storage
+        .from(COMPANY_BUCKET)
+        .upload(
+            filename,
+            file,
+            {
+                upsert:true,
+                contentType:
+                    file.type ||
+                    "image/jpeg"
+            }
+        );
+
+
+    if(error){
+
+        throw error;
+
+    }
+
+
+    const {
+        data:publicData
+    } =
+        supabaseClient
+        .storage
+        .from(COMPANY_BUCKET)
+        .getPublicUrl(
+            data.path
+        );
+
+
+    if(
+        !publicData ||
+        !publicData.publicUrl
+    ){
+
+        throw new Error(
+            "Não foi possível obter o URL público do logotipo."
+        );
+
+    }
+
+
+    return {
+
+        url:
+            publicData.publicUrl,
+
+        path:
+            data.path
+
+    };
+
+}
+
+
+/* =========================================================
+   REMOVER FICHEIRO DO STORAGE
+========================================================= */
+
+async function removeStorageFileFromUrl(
+    url
+){
+
+    if(!url) return;
+
+
+    try{
+
+        const marker =
+            "/storage/v1/object/public/" +
+            COMPANY_BUCKET +
+            "/";
+
+
+        const index =
+            url.indexOf(marker);
+
+
+        if(index === -1){
+
+            console.warn(
+                "URL não pertence ao bucket " +
+                COMPANY_BUCKET
+            );
+
+            return;
+        }
+
+
+        const path =
+            decodeURIComponent(
+                url.substring(
+                    index +
+                    marker.length
+                )
+            );
+
+
+        if(!path) return;
+
+
+        const {
+            error
+        } =
+            await supabaseClient
+            .storage
+            .from(COMPANY_BUCKET)
+            .remove([
+                path
+            ]);
+
+
+        if(error){
+
+            console.warn(
+                "Ficheiro antigo não removido:",
+                error.message
+            );
+
+        }
+
+    }catch(error){
+
+        console.warn(
+            "Erro ao remover ficheiro:",
+            error
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   UPLOAD / SUBSTITUIÇÃO LOGO EMPRESA
+========================================================= */
+
+async function uploadCompanyLogo(
+    companyId,
+    file,
+    showAlert=true
+){
+
+    try{
+
+        if(!companyId){
+
+            throw new Error(
+                "ID da empresa não encontrado."
+            );
+
+        }
+
+
+        if(!file){
+
+            throw new Error(
+                "Nenhuma imagem selecionada."
+            );
+
+        }
+
+
+        const company =
+            companies.find(
+                c =>
+                    String(c.id) ===
+                    String(companyId)
+            );
+
+
+        if(!company){
+
+            throw new Error(
+                "Empresa não encontrada."
+            );
+
+        }
+
+
+        if(showAlert){
+
+            setStatus(
+                "connection",
+                "🖼️ A carregar logotipo..."
+            );
+
+        }
+
+
+        const oldLogo =
+            company.logo_url || null;
+
+
+        /* ENVIA PARA empresas-imagens */
+
+        const uploaded =
+            await uploadToStorage(
+                file,
+                "empresas/" +
+                companyId
+            );
+
+
+        const newLogoUrl =
+            uploaded.url;
+
+
+        /* GUARDA URL */
+
+        const {
+            error
+        } =
+            await supabaseClient
+            .from("empresas")
+            .update({
+                logo_url:newLogoUrl
+            })
+            .eq(
+                "id",
+                companyId
+            );
+
+
+        if(error){
+
+            try{
+
+                await supabaseClient
+                .storage
+                .from(COMPANY_BUCKET)
+                .remove([
+                    uploaded.path
+                ]);
+
+            }catch(cleanError){
+
+                console.warn(
+                    cleanError
+                );
+
+            }
+
+            throw error;
+
+        }
+
+
+        /* ATUALIZA ARRAY */
+
+        const index =
+            companies.findIndex(
+                c =>
+                    String(c.id) ===
+                    String(companyId)
+            );
+
+
+        if(index !== -1){
+
+            companies[index].logo_url =
+                newLogoUrl;
+
+        }
+
+
+        /* REMOVE LOGO ANTIGO */
+
+        if(
+            oldLogo &&
+            oldLogo !== newLogoUrl
+        ){
+
+            await removeStorageFileFromUrl(
+                oldLogo
+            );
+
+        }
+
+
+        /* ATUALIZA TABELA */
+
+        displayCompanies(
+            companies
+        );
+
+
+        /* ATUALIZA DESTAQUES */
+
+        renderFeaturedCompanies(
+            companies
+        );
+
+
+        updateAdminStats();
+
+
+        if(showAlert){
+
+            setStatus(
+                "connection",
+                "✅ Logotipo carregado com sucesso.",
+                "success"
+            );
+
+
+            alert(
+                "✅ Logotipo guardado com sucesso."
+            );
+
+        }
+
+
+        return newLogoUrl;
+
+
+    }catch(error){
+
+        console.error(
+            "Erro ao carregar logotipo:",
+            error
+        );
+
+
+        if(showAlert){
+
+            alert(
+                "❌ Erro ao carregar logotipo:\n\n" +
+                error.message
+            );
+
+        }
+
+
+        throw error;
+
+    }
+
+}
+
+
+/* =========================================================
+   REMOVER LOGO
+========================================================= */
+
+async function removeCompanyLogo(
+    companyId
+){
+
+    const company =
+        companies.find(
+            c =>
+                String(c.id) ===
+                String(companyId)
+        );
+
+
+    if(!company){
+
+        alert(
+            "Empresa não encontrada."
+        );
+
+        return;
+
+    }
+
+
+    if(!company.logo_url){
+
+        alert(
+            "Esta empresa não possui logotipo."
+        );
+
+        return;
+
+    }
+
+
+    const confirmed =
+        confirm(
+            "Tem certeza que deseja remover o logotipo de " +
+            companyName(company) +
+            "?"
+        );
+
+
+    if(!confirmed){
+        return;
+    }
+
+
+    try{
+
+        setStatus(
+            "connection",
+            "🗑️ A remover logotipo..."
+        );
+
+
+        const oldLogo =
+            company.logo_url;
+
+
+        /* REMOVE URL DA EMPRESA */
+
+        const {
+            error
+        } =
+            await supabaseClient
+            .from("empresas")
+            .update({
+                logo_url:null
+            })
+            .eq(
+                "id",
+                companyId
+            );
+
+
+        if(error){
+
+            throw error;
+
+        }
+
+
+        /* REMOVE FICHEIRO */
+
+        await removeStorageFileFromUrl(
+            oldLogo
+        );
+
+
+        /* ATUALIZA ARRAY */
+
+        const index =
+            companies.findIndex(
+                c =>
+                    String(c.id) ===
+                    String(companyId)
+            );
+
+
+        if(index !== -1){
+
+            companies[index].logo_url =
+                null;
+
+        }
+
+
+        /* ATUALIZA TABELA */
+
+        displayCompanies(
+            companies
+        );
+
+
+        /* ATUALIZA DESTAQUES */
+
+        renderFeaturedCompanies(
+            companies
+        );
+
+
+        updateAdminStats();
+
+
+        setStatus(
+            "connection",
+            "✅ Logotipo removido com sucesso.",
+            "success"
+        );
+
+
+        alert(
+            "✅ Logotipo removido com sucesso."
+        );
+
+
+    }catch(error){
+
+        console.error(
+            "Erro ao remover logotipo:",
+            error
+        );
+
+
+        setStatus(
+            "connection",
+            "❌ Erro ao remover logotipo: " +
+            error.message,
+            "error"
+        );
+
+
+        alert(
+            "❌ Erro ao remover logotipo:\n\n" +
+            error.message
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   ESCOLHER LOGO
+========================================================= */
+
+async function manageCompanyLogo(
+    id
+){
+
+    const input =
+        document.createElement(
+            "input"
+        );
+
+
+    input.type =
+        "file";
+
+
+    input.accept =
+        "image/png,image/jpeg,image/webp,image/jfif";
+
+
+    input.onchange =
+        async function(){
+
+            const file =
+                input.files?.[0];
+
+
+            if(!file){
+                return;
+            }
+
+
+            try{
+
+                await uploadCompanyLogo(
+                    id,
+                    file,
+                    true
+                );
+
+            }catch(error){
+
+                console.error(error);
+
+            }
+
+        };
+
+
+    input.click();
+
+}
+
+
+/* =========================================================
+   LOGO DO SITE
+========================================================= */
+
+async function uploadSiteLogo(){
+
+    const file =
+        document
+        .getElementById(
+            "siteLogoFile"
+        )
+        ?.files?.[0];
+
+
+    if(!file){
+
+        setStatus(
+            "siteLogoStatus",
+            "Selecione uma imagem.",
+            "warning"
+        );
+
+        return;
+    }
+
+
+    setStatus(
+        "siteLogoStatus",
+        "A carregar logotipo..."
+    );
+
+
+    try{
+
+        const uploaded =
+            await uploadToStorage(
+                file,
+                "diretorio"
+            );
+
+
+        const url =
+            uploaded.url;
+
+
+        const {
+            data:existing,
+            error:readError
+        } =
+            await supabaseClient
+            .from("configuracao_site")
+            .select("id")
+            .eq("id",1)
+            .maybeSingle();
+
+
+        if(readError){
+
+            throw readError;
+
+        }
+
+
+        let result;
+
+
+        if(existing){
+
+            result =
+                await supabaseClient
+                .from("configuracao_site")
+                .update({
+                    logo_url:url
+                })
+                .eq(
+                    "id",
+                    1
+                );
+
+        }else{
+
+            result =
+                await supabaseClient
+                .from("configuracao_site")
+                .insert({
+                    id:1,
+                    logo_url:url
+                });
+
+        }
+
+
+        if(result.error){
+
+            throw result.error;
+
+        }
+
+
+        siteLogoUrl =
+            url;
+
+
+        showSiteLogo(
+            url
+        );
+
+
+        setStatus(
+            "siteLogoStatus",
+            "✅ Logotipo guardado no Supabase.",
+            "success"
+        );
+
+
+    }catch(error){
+
+        console.error(error);
+
+
+        setStatus(
+            "siteLogoStatus",
+            "Erro: " +
+            error.message,
+            "error"
+        );
+
+    }
+
+}
+
+
+async function loadSiteLogo(){
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient
+        .from("configuracao_site")
+        .select("*")
+        .eq("id",1)
+        .maybeSingle();
+
+
+    if(error){
+
+        console.warn(
+            "Logo do site:",
+            error.message
+        );
+
+        return;
+    }
+
+
+    if(data?.logo_url){
+
+        siteLogoUrl =
+            data.logo_url;
+
+        showSiteLogo(
+            data.logo_url
+        );
+
+    }
+
+}
+
+
+function showSiteLogo(url){
+
+    const box =
+        document.getElementById(
+            "siteLogoPreview"
+        );
+
+
+    if(!box) return;
+
+
+    box.innerHTML =
+        `
+        <img
+            src="${escapeHTML(url)}"
+            alt="Logotipo TudoAqui">
+        `;
+
+}
+
+
+async function removeSiteLogo(){
+
+    if(
+        !confirm(
+            "Remover o logotipo do Diretório?"
+        )
+    ){
+
+        return;
+
+    }
+
+
+    const {error} =
+        await supabaseClient
+        .from("configuracao_site")
+        .update({
+            logo_url:null
+        })
+        .eq(
+            "id",
+            1
+        );
+
+
+    if(error){
+
+        setStatus(
+            "siteLogoStatus",
+            "Erro: " +
+            error.message,
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    siteLogoUrl =
+        null;
+
+
+    document
+        .getElementById(
+            "siteLogoPreview"
+        )
+        .innerHTML =
+        "🇦🇴";
+
+
+    setStatus(
+        "siteLogoStatus",
+        "Logotipo removido.",
+        "success"
+    );
+
+}
+
+
+/* =========================================================
+   PESQUISA DE DESTAQUES
+========================================================= */
+
+function filterFeaturedCompanies(){
+
+    const value =
+        (
+            document.getElementById(
+                "featuredSearch"
+            )?.value || ""
+        )
+        .trim()
+        .toLowerCase();
+
+
+    const filtered =
+        companies.filter(
+            c =>
+                companyName(c)
+                .toLowerCase()
+                .includes(value)
+        );
+
+
+    renderFeaturedCompanies(
+        filtered
+    );
+
+}
+
+
+/* =========================================================
+   CARREGAR DESTAQUES
+========================================================= */
+
+async function loadFeaturedCompanies(){
+
+    if(!companies.length){
+
+        await loadCompanies();
+
+    }
+
+
+    renderFeaturedCompanies(
+        companies
+    );
+
+}
+
+
+/* =========================================================
+   RENDERIZAR DESTAQUES
+========================================================= */
+
+function renderFeaturedCompanies(
+    list
+){
+
+    const box =
+        document.getElementById(
+            "featuredCompanies"
+        );
+
+
+    if(!box) return;
+
+
+    box.innerHTML = "";
+
+
+    const sorted =
+        [...list].sort(
+            (a,b) => {
+
+                const fa =
+                    companyFeatured(a)
+                    ? 1
+                    : 0;
+
+
+                const fb =
+                    companyFeatured(b)
+                    ? 1
+                    : 0;
+
+
+                if(fa !== fb){
+
+                    return fb - fa;
+
+                }
+
+
+                const oa =
+                    Number(
+                        a.destaque_ordem ||
+                        999999
+                    );
+
+
+                const ob =
+                    Number(
+                        b.destaque_ordem ||
+                        999999
+                    );
+
+
+                return oa - ob;
+
+            }
+        );
+
+
+    if(!sorted.length){
+
+        box.innerHTML =
+            `
+            <div class="status">
+            Nenhuma empresa encontrada.
+            </div>
+            `;
+
+        return;
+
+    }
+
+
+    sorted.forEach(
+        company => {
+
+
+            const featured =
+                companyFeatured(
+                    company
+                );
+
+
+            const logo =
+                companyLogo(
+                    company
+                );
+
+
+            const ordem =
+                company.destaque_ordem ||
+                null;
+
+
+            const div =
+                document.createElement(
+                    "div"
+                );
+
+
+            div.className =
+                "company-card";
+
+
+            div.innerHTML = `
+
+<div
+    style="
+    display:flex;
+    align-items:center;
+    gap:15px;
+    flex-wrap:wrap;
+    ">
+
+
+<div class="featured-company-top">
+
+
+<div>
+
+${
+logo
+?
+`
+<img
+    src="${escapeHTML(logo)}"
+    class="featured-logo"
+    alt="Logo ${escapeHTML(companyName(company))}">
+`
+:
+`
+<div class="featured-no-logo">
+🏢
+</div>
+`
+}
+
+</div>
+
+
+<div style="flex:1">
+
+<strong>
+${escapeHTML(companyName(company))}
+</strong>
+
+<br>
+
+<small>
+${escapeHTML(companySector(company))}
+</small>
+
+<br>
+
+
+${
+featured
+?
+`
+<span class="badge badge-yellow">
+⭐ Em destaque
+</span>
+
+${
+ordem
+?
+`
+<span class="badge badge-blue">
+Posição #${escapeHTML(ordem)}
+</span>
+`
+:
+""
+}
+
+`
+:
+`
+<span class="badge">
+Não está em destaque
+</span>
+`
+}
+
+
+</div>
+
+</div>
+
+
+<div class="featured-actions">
+
+
+${
+logo
+?
+`
+<button
+    class="btn-primary"
+    onclick="manageCompanyLogo(${JSON.stringify(company.id)})">
+    🖼️ Substituir logo
+</button>
+
+<button
+    class="btn-danger"
+    onclick="removeCompanyLogo(${JSON.stringify(company.id)})">
+    🗑️ Remover logo
+</button>
+`
+:
+`
+<button
+    class="btn-primary"
+    onclick="manageCompanyLogo(${JSON.stringify(company.id)})">
+    ⬆️ Carregar logo
+</button>
+`
+}
+
+
+<button
+    class="${featured ? "btn-warning":"btn-success"}"
+    onclick="toggleFeatured(${JSON.stringify(company.id)})">
+
+${
+featured
+?
+"⭐ Retirar"
+:
+"☆ Colocar em destaque"
+}
+
+</button>
+
+
+${
+featured
+?
+`
+<button
+    class="btn-secondary"
+    onclick="moveFeatured(${JSON.stringify(company.id)},'up')">
+    ⬆️ Subir
+</button>
+
+<button
+    class="btn-secondary"
+    onclick="moveFeatured(${JSON.stringify(company.id)},'down')">
+    ⬇️ Descer
+</button>
+`
+:
+""
+}
+
+
+</div>
+
+
+</div>
+
+`;
+
+
+            box.appendChild(
+                div
+            );
+
+        }
+    );
+
+
+    setStatus(
+        "featuredStatus",
+        sorted.length +
+        " empresas carregadas.",
+        "success"
+    );
+
+}
+
+
+/* =========================================================
+   COLOCAR / RETIRAR DESTAQUE
+========================================================= */
+
+async function toggleFeatured(
+    id
+){
+
+    const company =
+        companies.find(
+            c =>
+                String(c.id) ===
+                String(id)
+        );
+
+
+    if(!company) return;
+
+
+    const newValue =
+        !companyFeatured(
+            company
+        );
+
+
+    if(newValue){
+
+        const {
+            data:maxData,
+            error:maxError
+        } =
+            await supabaseClient
+            .from("empresas")
+            .select("destaque_ordem")
+            .eq("destaque",true)
+            .order(
+                "destaque_ordem",
+                {
+                    ascending:false,
+                    nullsFirst:false
+                }
+            )
+            .limit(1);
+
+
+        if(maxError){
+
+            alert(
+                "Erro ao calcular posição: " +
+                maxError.message
+            );
+
+            return;
+
+        }
+
+
+        const max =
+            maxData?.[0]
+            ?.destaque_ordem || 0;
+
+
+        const {
+            error
+        } =
+            await supabaseClient
+            .from("empresas")
+            .update({
+                destaque:true,
+                destaque_ordem:
+                    Number(max) + 1
+            })
+            .eq(
+                "id",
+                id
+            );
+
+
+        if(error){
+
+            alert(
+                "Erro ao colocar destaque: " +
+                error.message
+            );
+
+            return;
+
+        }
+
+    }else{
+
+
+        const {
+            error
+        } =
+            await supabaseClient
+            .from("empresas")
+            .update({
+                destaque:false,
+                destaque_ordem:null
+            })
+            .eq(
+                "id",
+                id
+            );
+
+
+        if(error){
+
+            alert(
+                "Erro ao retirar destaque: " +
+                error.message
+            );
+
+            return;
+
+        }
+
+    }
+
+
+    await loadCompanies();
+
+    renderFeaturedCompanies(
+        companies
+    );
+
+}
+
+
+/* =========================================================
+   SUBIR / DESCER DESTAQUE
+========================================================= */
+
+async function moveFeatured(
+    id,
+    direction
+){
+
+    const featured =
+        companies
+        .filter(
+            c =>
+                companyFeatured(c)
+        )
+        .sort(
+            (a,b) =>
+                Number(
+                    a.destaque_ordem || 999999
+                )
+                -
+                Number(
+                    b.destaque_ordem || 999999
+                )
+        );
+
+
+    const index =
+        featured.findIndex(
+            c =>
+                String(c.id) ===
+                String(id)
+        );
+
+
+    if(index === -1){
+
+        alert(
+            "Empresa não está em destaque."
+        );
+
+        return;
+
+    }
+
+
+    let swapIndex;
+
+
+    if(direction === "up"){
+
+        swapIndex =
+            index - 1;
+
+    }else{
+
+        swapIndex =
+            index + 1;
+
+    }
+
+
+    if(
+        swapIndex < 0 ||
+        swapIndex >= featured.length
+    ){
+
+        return;
+
+    }
+
+
+    const current =
+        featured[index];
+
+    const other =
+        featured[swapIndex];
+
+
+    const currentOrder =
+        Number(
+            current.destaque_ordem
+        );
+
+
+    const otherOrder =
+        Number(
+            other.destaque_ordem
+        );
+
+
+    const {error:error1} =
+        await supabaseClient
+        .from("empresas")
+        .update({
+            destaque_ordem:
+                otherOrder
+        })
+        .eq(
+            "id",
+            current.id
+        );
+
+
+    if(error1){
+
+        alert(
+            "Erro ao alterar posição: " +
+            error1.message
+        );
+
+        return;
+
+    }
+
+
+    const {error:error2} =
+        await supabaseClient
+        .from("empresas")
+        .update({
+            destaque_ordem:
+                currentOrder
+        })
+        .eq(
+            "id",
+            other.id
+        );
+
+
+    if(error2){
+
+        alert(
+            "Erro ao alterar posição: " +
+            error2.message
+        );
+
+        return;
+
+    }
+
+
+    await loadCompanies();
+
+    renderFeaturedCompanies(
+        companies
+    );
+
+}
+
+
+/* =========================================================
+   PLANOS
+========================================================= */
+
+async function loadPlans(){
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient
+        .from("planos_empresas")
+        .select("*")
+        .order("id");
+
+
+    if(error){
+
+        setStatus(
+            "plansStatus",
+            "Tabela de planos: " +
+            error.message,
+            "warning"
+        );
+
+        plans = [];
+
+        return;
+
+    }
+
+
+    plans =
+        data || [];
+
+
+    setStatus(
+        "plansStatus",
+        plans.length +
+        " planos carregados.",
+        "success"
+    );
+
+}
+
+
+function getPlanBySlug(
+    slug
+){
+
+    return plans.find(
+        p =>
+            p.slug === slug
+    );
+
+}
+
+
+async function loadPlanCompanies(){
+
+    const table =
+        document.getElementById(
+            "plansCompanyList"
+        );
+
+
+    if(!table) return;
+
+
+    if(!companies.length){
+
+        await loadCompanies();
+
+    }
+
+
+    table.innerHTML = "";
+
+
+    companies.forEach(
+        company => {
+
+
+            const plan =
+                getPlanBySlug(
+                    companyPlan(
+                        company
+                    )
+                );
+
+
+            const row =
+                document.createElement(
+                    "tr"
+                );
+
+
+            row.innerHTML = `
+
+<td>
+${escapeHTML(
+    companyName(company)
+)}
+</td>
+
+<td>
+${escapeHTML(
+    plan?.nome ||
+    companyPlan(company)
+)}
+</td>
+
+<td>
+
+<span class="badge badge-green">
+${escapeHTML(
+    company.plano_status ||
+    "ativo"
+)}
+</span>
+
+</td>
+
+<td>
+
+${
+companyPayment(company)
+?
+`
+<span class="badge badge-green">
+Confirmado
+</span>
+`
+:
+`
+<span class="badge badge-yellow">
+Pendente
+</span>
+`
+}
+
+</td>
+
+<td>
+
+${
+companyLogo(company)
+?
+"✅"
+:
+"❌"
+}
+
+</td>
+
+<td>
+
+${
+companyFeatured(company)
+?
+"⭐"
+:
+"—"
+}
+
+</td>
+
+`;
+
+
+            table.appendChild(
+                row
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   PAGAMENTOS
+========================================================= */
+
+async function loadPayments(){
+
+    const table =
+        document.getElementById(
+            "paymentsList"
+        );
+
+
+    if(!table) return;
+
+
+    if(!companies.length){
+
+        await loadCompanies();
+
+    }
+
+
+    table.innerHTML = "";
+
+
+    companies.forEach(
+        company => {
+
+
+            const confirmed =
+                companyPayment(
+                    company
+                );
+
+
+            const plan =
+                companyPlan(
+                    company
+                );
+
+
+            const price =
+                company.preco ??
+                (
+                    plan === "premium"
+                    ? 30000
+                    :
+                    plan === "basico"
+                    ? 15000
+                    :
+                    0
+                );
+
+
+            const row =
+                document.createElement(
+                    "tr"
+                );
+
+
+            row.innerHTML = `
+
+<td>
+${escapeHTML(
+    companyName(company)
+)}
+</td>
+
+<td>
+${escapeHTML(plan)}
+</td>
+
+<td>
+${escapeHTML(price)} AOA
+</td>
+
+<td>
+
+${
+confirmed
+?
+`
+<span class="badge badge-green">
+Confirmado
+</span>
+`
+:
+`
+<span class="badge badge-yellow">
+Pendente
+</span>
+`
+}
+
+</td>
+
+<td>
+
+${
+!confirmed
+
+?
+
+`
+<button
+    class="btn-success"
+    onclick="confirmPayment(${JSON.stringify(company.id)})">
+    ✅ Confirmar pagamento
+</button>
+`
+
+:
+
+`
+<button
+    class="btn-secondary"
+    onclick="cancelPayment(${JSON.stringify(company.id)})">
+    ↩️ Reverter
+</button>
+`
+
+}
+
+</td>
+
+`;
+
+
+            table.appendChild(
+                row
+            );
+
+        }
+    );
+
+}
+
+
+async function confirmPayment(
+    id
+){
+
+    if(
+        !confirm(
+            "Confirmar pagamento desta empresa?"
+        )
+    ){
+
+        return;
+
+    }
+
+
+    const now =
+        new Date()
+        .toISOString();
+
+
+    const {error} =
+        await supabaseClient
+        .from("empresas")
+        .update({
+
+            pagamento_confirmado:true,
+
+            pagamento_data:now,
+
+            plano_status:"ativo"
+
+        })
+        .eq(
+            "id",
+            id
+        );
+
+
+    if(error){
+
+        alert(
+            "Erro: " +
+            error.message
+        );
+
+        return;
+
+    }
+
+
+    await loadCompanies();
+
+    await loadPayments();
+
+}
+
+
+async function cancelPayment(
+    id
+){
+
+    if(
+        !confirm(
+            "Reverter confirmação do pagamento?"
+        )
+    ){
+
+        return;
+
+    }
+
+
+    const {error} =
+        await supabaseClient
+        .from("empresas")
+        .update({
+
+            pagamento_confirmado:false,
+
+            plano_status:"pendente",
+
+            pagamento_data:null
+
+        })
+        .eq(
+            "id",
+            id
+        );
+
+
+    if(error){
+
+        alert(
+            "Erro: " +
+            error.message
+        );
+
+        return;
+
+    }
+
+
+    await loadCompanies();
+
+    await loadPayments();
+
+}
+
+
+/* =========================================================
+   POPUPS
+========================================================= */
+
+async function loadPopups(){
+
+    const box =
+        document.getElementById(
+            "popupList"
+        );
+
+
+    if(!box) return;
+
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient
+        .from("popups_config")
+        .select("*")
+        .order(
+            "id",
+            {
+                ascending:false
+            }
+        );
+
+
+    if(error){
+
+        box.innerHTML =
+            `
+            <div class="status error">
+            Erro ao carregar popups:
+            ${escapeHTML(error.message)}
+            </div>
+            `;
+
+        return;
+
+    }
+
+
+    popups =
+        data || [];
+
+
+    box.innerHTML = "";
+
+
+    if(!popups.length){
+
+        box.innerHTML =
+            `
+            <div class="status">
+            Ainda não existem popups.
+            </div>
+            `;
+
+        return;
+
+    }
+
+
+    popups.forEach(
+        popup => {
+
+
+            const div =
+                document.createElement(
+                    "div"
+                );
+
+
+            div.className =
+                "popup-preview";
+
+
+            const image =
+                popup.imagem_url ??
+                popup.image_url ??
+                popup.imagem ??
+                null;
+
+
+            const title =
+                popup.titulo ??
+                popup.title ??
+                "";
+
+
+            const content =
+                popup.content ??
+                popup.texto ??
+                "";
+
+
+            const position =
+                popup.posicao ??
+                popup.position ??
+                "center";
+
+
+            div.innerHTML = `
+
+${
+image
+?
+`
+<img
+    src="${escapeHTML(image)}"
+    class="popup-image"
+    alt="Popup">
+`
+:
+""
+}
+
+<h3>
+${escapeHTML(title)}
+</h3>
+
+<p>
+${escapeHTML(content)}
+</p>
+
+<span
+    class="badge ${
+        popup.ativo
+        ?
+        "badge-green"
+        :
+        "badge-red"
+    }">
+
+${
+popup.ativo
+?
+"Ativo"
+:
+"Inativo"
+}
+
+</span>
+
+<span class="badge">
+
+${escapeHTML(position)}
+
+</span>
+
+<br>
+
+
+<button
+    class="btn-primary"
+    onclick="editPopup(${JSON.stringify(popup.id)})">
+    ✏️ Editar
+</button>
+
+
+<button
+    class="btn-warning"
+    onclick="togglePopup(
+        ${JSON.stringify(popup.id)},
+        ${popup.ativo ? "false":"true"}
+    )">
+
+${
+popup.ativo
+?
+"Desativar"
+:
+"Ativar"
+}
+
+</button>
+
+
+<button
+    class="btn-danger"
+    onclick="deletePopup(${JSON.stringify(popup.id)})">
+    🗑️ Apagar
+</button>
+
+`;
+
+
+            box.appendChild(
+                div
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   GUARDAR POPUP
+========================================================= */
+
+async function savePopup(){
+
+    const id =
+        document.getElementById(
+            "popupId"
+        ).value;
+
+
+    const titulo =
+        document.getElementById(
+            "popupTitle"
+        ).value
+        .trim();
+
+
+    const botao =
+        document.getElementById(
+            "popupButton"
+        ).value
+        .trim();
+
+
+    const posicao =
+        document.getElementById(
+            "popupPosition"
+        ).value;
+
+
+    const ativo =
+        document.getElementById(
+            "popupActive"
+        ).checked;
+
+
+    const file =
+        document.getElementById(
+            "popupImage"
+        )
+        ?.files?.[0];
+
+
+    if(!titulo){
+
+        setStatus(
+            "popupStatus",
+            "Digite o título do popup.",
+            "warning"
+        );
+
+        return;
+
+    }
+
+
+    setStatus(
+        "popupStatus",
+        "A guardar popup..."
+    );
+
+
+    try{
+
+        let imagem_url =
+            null;
+
+
+        if(file){
+
+            imagem_url =
+                await uploadPopupImage(
+                    file
+                );
+
+        }
+
+
+        const payload = {
+
+            titulo,
+
+            botao_texto:
+                botao,
+
+            posicao,
+
+            ativo
+
+        };
+
+
+        if(imagem_url){
+
+            payload.imagem_url =
+                imagem_url;
+
+        }
+
+
+        let result;
+
+
+        if(id){
+
+            result =
+                await supabaseClient
+                .from("popups_config")
+                .update(payload)
+                .eq(
+                    "id",
+                    id
+                );
+
+        }else{
+
+            result =
+                await supabaseClient
+                .from("popups_config")
+                .insert(payload);
+
+        }
+
+
+        if(result.error){
+
+            throw result.error;
+
+        }
+
+
+        setStatus(
+            "popupStatus",
+            "✅ Popup guardado no Supabase.",
+            "success"
+        );
+
+
+        clearPopupForm();
+
+
+        await loadPopups();
+
+
+    }catch(error){
+
+        console.error(error);
+
+
+        setStatus(
+            "popupStatus",
+            "Erro: " +
+            error.message,
+            "error"
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   UPLOAD IMAGEM POPUP
+========================================================= */
+
+async function uploadPopupImage(
+    file
+){
+
+    if(!file){
+
+        throw new Error(
+            "Nenhuma imagem selecionada."
+        );
+
+    }
+
+
+    if(
+        file.size >
+        5 * 1024 * 1024
+    ){
+
+        throw new Error(
+            "A imagem não pode ultrapassar 5 MB."
+        );
+
+    }
+
+
+    const extension =
+        file.name
+        .split(".")
+        .pop()
+        .toLowerCase();
+
+
+    const allowed = [
+
+        "png",
+        "jpg",
+        "jpeg",
+        "webp"
+
+    ];
+
+
+    if(
+        !allowed.includes(
+            extension
+        )
+    ){
+
+        throw new Error(
+            "Formato de imagem não permitido."
+        );
+
+    }
+
+
+    const filename =
+        "popups/" +
+        Date.now() +
+        "_" +
+        Math.random()
+        .toString(36)
+        .substring(2,8) +
+        "." +
+        extension;
+
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient
+        .storage
+        .from("midia")
+        .upload(
+            filename,
+            file,
+            {
+                upsert:true,
+                contentType:file.type
+            }
+        );
+
+
+    if(error){
+
+        throw error;
+
+    }
+
+
+    const {
+        data:publicData
+    } =
+        supabaseClient
+        .storage
+        .from("midia")
+        .getPublicUrl(
+            data.path
+        );
+
+
+    return publicData.publicUrl;
+
+}
+
+
+/* =========================================================
+   EDITAR POPUP
+========================================================= */
+
+function editPopup(id){
+
+    const popup =
+        popups.find(
+            p =>
+                String(p.id) ===
+                String(id)
+        );
+
+
+    if(!popup) return;
+
+
+    document.getElementById(
+        "popupId"
+    ).value =
+        popup.id;
+
+
+    document.getElementById(
+        "popupTitle"
+    ).value =
+        popup.titulo ??
+        popup.title ??
+        "";
+
+
+    document.getElementById(
+        "popupContent"
+    ).value =
+        popup.content ??
+        popup.texto ??
+        "";
+
+
+    document.getElementById(
+        "popupButton"
+    ).value =
+        popup.botao_texto ??
+        popup.button_text ??
+        "";
+
+
+    document.getElementById(
+        "popupLink"
+    ).value =
+        popup.url ??
+        "";
+
+
+    document.getElementById(
+        "popupPosition"
+    ).value =
+        popup.posicao ??
+        popup.position ??
+        "center";
+
+
+    document.getElementById(
+        "popupActive"
+    ).checked =
+        Boolean(
+            popup.ativo
+        );
+
+
+    document
+        .getElementById(
+            "popupsTab"
+        )
+        ?.scrollIntoView({
+            behavior:"smooth"
+        });
+
+}
+
+
+/* =========================================================
+   LIMPAR POPUP
+========================================================= */
+
+function clearPopupForm(){
+
+    document.getElementById(
+        "popupId"
+    ).value = "";
+
+
+    document.getElementById(
+        "popupTitle"
+    ).value = "";
+
+
+    document.getElementById(
+        "popupContent"
+    ).value = "";
+
+
+    document.getElementById(
+        "popupButton"
+    ).value = "";
+
+
+    document.getElementById(
+        "popupLink"
+    ).value = "";
+
+
+    document.getElementById(
+        "popupPosition"
+    ).value =
+        "center";
+
+
+    document.getElementById(
+        "popupActive"
+    ).checked =
+        false;
+
+
+    const file =
+        document.getElementById(
+            "popupImage"
+        );
+
+
+    if(file){
+
+        file.value = "";
+
+    }
+
+}
+
+
+/* =========================================================
+   ATIVAR / DESATIVAR POPUP
+========================================================= */
+
+async function togglePopup(
+    id,
+    value
+){
+
+    const {error} =
+        await supabaseClient
+        .from("popups_config")
+        .update({
+            ativo:Boolean(value)
+        })
+        .eq(
+            "id",
+            id
+        );
+
+
+    if(error){
+
+        alert(
+            "Erro: " +
+            error.message
+        );
+
+        return;
+
+    }
+
+
+    await loadPopups();
+
+}
+
+
+/* =========================================================
+   APAGAR POPUP
+========================================================= */
+
+async function deletePopup(
+    id
+){
+
+    if(
+        !confirm(
+            "Apagar este popup?"
+        )
+    ){
+
+        return;
+
+    }
+
+
+    const {error} =
+        await supabaseClient
+        .from("popups_config")
+        .delete()
+        .eq(
+            "id",
+            id
+        );
+
+
+    if(error){
+
+        alert(
+            "Erro: " +
+            error.message
+        );
+
+        return;
+
+    }
+
+
+    await loadPopups();
+
+}
+
+
+/* =========================================================
+   CAMPANHAS
+========================================================= */
+
+async function createCampaign(){
+
+    const subject =
+        document.getElementById(
+            "marketingSubject"
+        )
+        .value
+        .trim();
+
+
+    const body =
+        document.getElementById(
+            "marketingBody"
+        )
+        .value
+        .trim();
+
+
+    if(
+        !subject ||
+        !body
+    ){
+
+        setStatus(
+            "marketingStatus",
+            "Preencha o assunto e a mensagem.",
+            "warning"
+        );
+
+        return;
+
+    }
+
+
+    const {error} =
+        await supabaseClient
+        .from("email_campaigns")
+        .insert({
+            subject,
+            body
+        });
+
+
+    if(error){
+
+        setStatus(
+            "marketingStatus",
+            "Erro: " +
+            error.message,
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    setStatus(
+        "marketingStatus",
+        "✅ Campanha guardada.",
+        "success"
+    );
+
+
+    document.getElementById(
+        "marketingSubject"
+    ).value = "";
+
+
+    document.getElementById(
+        "marketingBody"
+    ).value = "";
+
+
+    await loadCampaigns();
+
+
+    updateAdminStats();
+
+}
+
+
+/* =========================================================
+   CARREGAR CAMPANHAS
+========================================================= */
+
+async function loadCampaigns(){
+
+    const list =
+        document.getElementById(
+            "campaignList"
+        );
+
+
+    if(!list) return;
+
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient
+        .from("email_campaigns")
+        .select("*")
+        .order(
+            "created_at",
+            {
+                ascending:false
+            }
+        );
+
+
+    if(error){
+
+        list.innerHTML =
+            `
+            <tr>
+            <td colspan="3">
+            A tabela email_campaigns não está disponível:
+            ${escapeHTML(error.message)}
+            </td>
+            </tr>
+            `;
+
+        return;
+
+    }
+
+
+    list.innerHTML =
+        (data || [])
+        .map(
+            c =>
+                `
+
+<tr>
+
+<td>
+${escapeHTML(c.subject)}
+</td>
+
+<td>
+
+${
+c.created_at
+?
+escapeHTML(
+    new Date(
+        c.created_at
+    )
+    .toLocaleString(
+        "pt-PT"
+    )
+)
+:
+""
+}
+
+</td>
+
+<td>
+
+<button
+    class="btn-danger"
+    onclick="deleteCampaignAdmin(${JSON.stringify(c.id)})">
+    Apagar
+</button>
+
+</td>
+
+</tr>
+
+`
+        )
+        .join("");
+
+}
+
+
+/* =========================================================
+   APAGAR CAMPANHA
+========================================================= */
+
+async function deleteCampaignAdmin(
+    id
+){
+
+    if(
+        !confirm(
+            "Apagar esta campanha?"
+        )
+    ){
+
+        return;
+
+    }
+
+
+    const {error} =
+        await supabaseClient
+        .from("email_campaigns")
+        .delete()
+        .eq(
+            "id",
+            id
+        );
+
+
+    if(error){
+
+        alert(
+            "Erro: " +
+            error.message
+        );
+
+        return;
+
+    }
+
+
+    await loadCampaigns();
+
+    updateAdminStats();
+
+}
+
+
+/* =========================================================
+   ESTATÍSTICAS
+========================================================= */
+
+async function updateAdminStats(){
+
+    const companyCount =
+        document.getElementById(
+            "adminCompanyCount"
+        );
+
+
+    if(companyCount){
+
+        companyCount.innerText =
+            companies.length;
+
+    }
+
+
+    const featuredCount =
+        companies.filter(
+            companyFeatured
+        ).length;
+
+
+    const featured =
+        document.getElementById(
+            "adminFeaturedCount"
+        );
+
+
+    if(featured){
+
+        featured.innerText =
+            featuredCount;
+
+    }
+
+
+    const subscribers =
+        document.getElementById(
+            "adminSubscriberCount"
+        );
+
+
+    if(subscribers){
+
+        const {
+            count,
+            error
+        } =
+            await supabaseClient
+            .from("newsletter")
+            .select(
+                "*",
+                {
+                    count:"exact",
+                    head:true
+                }
+            );
+
+
+        subscribers.innerText =
+            error
+            ?
+            "—"
+            :
+            (
+                count || 0
+            );
+
+    }
+
+
+    const campaigns =
+        document.getElementById(
+            "adminCampaignCount"
+        );
+
+
+    if(campaigns){
+
+        const {
+            count,
+            error
+        } =
+            await supabaseClient
+            .from("email_campaigns")
+            .select(
+                "*",
+                {
+                    count:"exact",
+                    head:true
+                }
+            );
+
+
+        campaigns.innerText =
+            error
+            ?
+            "0"
+            :
+            (
+                count || 0
+            );
+
+    }
+
+}
+
+
+/* =========================================================
+   PLACEHOLDER
+========================================================= */
+
+function saveAdminPlaceholder(
+    id,
+    message
+){
+
+    setStatus(
+        id,
+        message,
+        "success"
+    );
+
+}
+
+
+/* =========================================================
+   ATUALIZAR TUDO
+========================================================= */
+
+async function refreshEverything(){
+
+    setStatus(
+        "connection",
+        "🔄 A sincronizar com Supabase..."
+    );
+
+
+    await loadCompanies();
+
+    await loadSiteLogo();
+
+    await loadPopups();
+
+    await loadCampaigns();
+
+    await updateAdminStats();
+
+
+    setStatus(
+        "connection",
+        "✅ Sistema sincronizado com Supabase.",
+        "success"
+    );
+
+}
+
+
+/* =========================================================
+   SESSÃO
+========================================================= */
+
+async function checkSession(){
+
+    const {
+        data
+    } =
+        await supabaseClient
+        .auth
+        .getSession();
+
+
+    if(data?.session){
+
+        showDashboard();
+
+    }
+
+}
+
+
+supabaseClient
+    .auth
+    .onAuthStateChange(
+        (
+            event,
+            session
+        ) => {
+
+            if(session){
+
+                showDashboard();
+
+            }else if(
+                event ===
+                "SIGNED_OUT"
+            ){
+
+                document
+                    .getElementById(
+                        "dashboard"
+                    )
+                    ?.classList
+                    .add("hidden");
+
+
+                document
+                    .getElementById(
+                        "loginBox"
+                    )
+                    ?.classList
+                    .remove("hidden");
+
+
+                document
+                    .getElementById(
+                        "logout"
+                    )
+                    ?.classList
+                    .add("hidden");
+
+            }
+
+        }
+    );
+
+
+checkSession();
+
+</script>
+
+</body>
+</html>
