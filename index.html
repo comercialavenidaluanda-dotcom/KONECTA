@@ -997,7 +997,6 @@ footer{
 .cadastro-box{
   max-width:620px;
 }
-
 .cadastro-header{
   padding-right:45px;
   margin-bottom:20px;
@@ -1447,6 +1446,24 @@ footer{
 }
 
 </style>
+
+<style id="konecta-checkout-styles">
+#konectaCheckoutOverlay{display:none;position:fixed;inset:0;z-index:100000;background:rgba(12,20,35,.66);padding:18px;overflow:auto;align-items:center;justify-content:center}
+#konectaCheckoutOverlay.aberto{display:flex}
+#konectaCheckout{width:min(100%,560px);background:#fff;color:#172033;border-radius:18px;padding:24px;box-shadow:0 24px 80px #0004;position:relative;max-height:92vh;overflow:auto}
+#konectaCheckout h2{margin:0 42px 8px 0;color:#f05a28}#konectaCheckout p{line-height:1.5}
+#konectaCheckout .kc-close{position:absolute;right:14px;top:12px;border:0;background:#f1f3f5;border-radius:50%;width:36px;height:36px;font-size:20px;cursor:pointer}
+#konectaCheckout .kc-field{display:block;margin:12px 0;font-weight:600;font-size:14px}
+#konectaCheckout input,#konectaCheckout select{display:block;width:100%;box-sizing:border-box;margin-top:6px;padding:12px;border:1px solid #cbd2dc;border-radius:9px;font:inherit;background:#fff;color:#172033}
+#konectaCheckout .kc-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+#konectaCheckout .kc-btn{border:0;border-radius:9px;padding:12px 16px;font-weight:700;cursor:pointer;background:#f05a28;color:#fff}
+#konectaCheckout .kc-btn.sec{background:#edf0f4;color:#172033}#konectaCheckout .kc-btn:disabled{opacity:.55;cursor:wait}
+#konectaCheckout .kc-note{background:#fff4ed;border-left:4px solid #f05a28;border-radius:6px;padding:12px;font-size:14px}
+#konectaCheckout .kc-status{margin-top:14px;padding:12px;border-radius:8px;background:#f3f5f7;white-space:pre-wrap;overflow-wrap:anywhere}
+#konectaCheckout .kc-hidden{display:none!important}
+@media(max-width:520px){#konectaCheckout{padding:18px}#konectaCheckout .kc-actions .kc-btn{width:100%}}
+</style>
+
 </head>
 
 <body>
@@ -1509,6 +1526,10 @@ footer{
 
       <button onclick="ir('publicidade')">
         Publicidade
+      </button>
+
+      <button onclick="solicitarPublicidade()" aria-label="Solicitar publicidade na KONECTA">
+        Publicitar
       </button>
 
       <button onclick="ir('videos')">
@@ -1809,6 +1830,14 @@ footer{
         Empresas e marcas em destaque.
       </p>
 
+      <button
+        type="button"
+        onclick="solicitarPublicidade()"
+        style="margin-top:12px;padding:12px 20px;border:0;border-radius:8px;background:#25d366;color:#fff;font-weight:700;cursor:pointer;"
+      >
+        📢 Publicitar na KONECTA
+      </button>
+
     </div>
 
   </div>
@@ -1967,8 +1996,7 @@ footer{
     <div>
 
       <h3
-        class="footer-brand"
-        id="footerNomeSite"
+        class="footer-brand"        id="footerNomeSite"
       >
         KONECTA
       </h3>
@@ -2410,6 +2438,44 @@ footer{
 
 </div>
 
+
+
+<div id="konectaCheckoutOverlay" role="dialog" aria-modal="true" aria-labelledby="kcTitulo" onclick="if(event.target===this)fecharCheckoutKonecta()">
+  <div id="konectaCheckout">
+    <button type="button" class="kc-close" onclick="fecharCheckoutKonecta()" aria-label="Fechar">×</button>
+    <h2 id="kcTitulo">Publicitar na KONECTA</h2>
+    <p>Escolha um plano e crie o seu pedido de publicidade.</p>
+    <div class="kc-note">O pedido fica <strong>pendente</strong> até a equipa confirmar o pagamento. Este formulário não debita dinheiro nem confirma automaticamente uma transferência.</div>
+    <form id="kcFormPublicidade">
+      <label class="kc-field">Plano
+        <select id="kcPlano" required>
+          <option value="1">Destaque Básico — 15.000 Kz / 30 dias</option>
+          <option value="2">Destaque Premium — 30.000 Kz / 30 dias</option>
+          <option value="3">Banner Publicitário — 25.000 Kz / 30 dias</option>
+        </select>
+      </label>
+      <label class="kc-field">Nome da empresa ou anunciante<input id="kcAnunciante" maxlength="160" required autocomplete="organization" placeholder="Nome da empresa/marca"></label>
+      <label class="kc-field">Telefone de contacto<input id="kcTelefone" maxlength="40" required autocomplete="tel" placeholder="Ex.: 923 000 000"></label>
+      <label class="kc-field">E-mail da conta<input id="kcEmail" type="email" required autocomplete="email" placeholder="email@empresa.ao"></label>
+      <label class="kc-field">Método de pagamento
+        <select id="kcMetodo" required><option value="multicaixa_express">Multicaixa Express</option><option value="iban">Transferência bancária / IBAN</option></select>
+      </label>
+      <div id="kcAuthArea">
+        <p id="kcAuthIntro">Entre na sua conta KONECTA para criar o pedido. Se ainda não tem conta, pode registar-se com o seu e-mail.</p>
+        <label class="kc-field">Palavra-passe<input id="kcPassword" type="password" minlength="8" autocomplete="current-password" placeholder="Mínimo de 8 caracteres"></label>
+        <div class="kc-actions">
+          <button class="kc-btn" type="button" id="kcEntrarBtn" onclick="autenticarCheckoutKonecta('entrar')">Entrar</button>
+          <button class="kc-btn sec" type="button" id="kcRegistarBtn" onclick="autenticarCheckoutKonecta('registar')">Criar conta</button>
+        </div>
+      </div>
+      <div id="kcLoggedArea" class="kc-hidden">
+        <p id="kcLoggedInfo"></p>
+        <div class="kc-actions"><button class="kc-btn" type="submit" id="kcCriarPedidoBtn">Criar pedido de publicidade</button><button class="kc-btn sec" type="button" onclick="sairCheckoutKonecta()">Terminar sessão</button></div>
+      </div>
+    </form>
+    <div id="kcResultado" class="kc-status" role="status" aria-live="polite">Selecione o plano e entre na sua conta.</div>
+  </div>
+</div>
 
 <script>
 
@@ -2929,7 +2995,6 @@ async function carregarConfiguracaoSite(){
       document.getElementById(
         "logoSiteContainer"
       );
-
 
     if(
       logo &&
@@ -3929,7 +3994,6 @@ function renderizarDetalheEmpresa(e){
               </div>
 
             `
-
             : ""
         }
 
@@ -4882,6 +4946,124 @@ async function carregarNoticias(){
 
 
 /* =========================================================
+   CHECKOUT DE PUBLICIDADE — KONECTA
+   Usa autenticação Supabase e a Edge Function existente.
+   Não confirma pagamentos nem activa anúncios automaticamente.
+========================================================= */
+let kcUtilizador = null;
+
+function solicitarPublicidade(){
+  const overlay = document.getElementById('konectaCheckoutOverlay');
+  if (!overlay) return;
+  overlay.classList.add('aberto');
+  document.body.style.overflow = 'hidden';
+  document.getElementById('kcResultado').textContent = 'Selecione o plano e entre na sua conta.';
+  sincronizarSessaoCheckoutKonecta();
+}
+
+function fecharCheckoutKonecta(){
+  const overlay = document.getElementById('konectaCheckoutOverlay');
+  if (overlay) overlay.classList.remove('aberto');
+  document.body.style.overflow = '';
+}
+
+function mensagemCheckoutKonecta(texto, erro=false){
+  const el=document.getElementById('kcResultado');
+  if(el){el.textContent=texto;el.style.background=erro?'#fff0f0':'#f3f5f7';el.style.color=erro?'#a32121':'#172033';}
+}
+
+async function sincronizarSessaoCheckoutKonecta(){
+  try{
+    const {data,error}=await supabaseClient.auth.getSession();
+    if(error) throw error;
+    kcUtilizador=data.session?.user||null;
+    const auth=document.getElementById('kcAuthArea');
+    const logged=document.getElementById('kcLoggedArea');
+    auth.classList.toggle('kc-hidden',!!kcUtilizador);
+    logged.classList.toggle('kc-hidden',!kcUtilizador);
+    if(kcUtilizador){
+      document.getElementById('kcEmail').value=kcUtilizador.email||document.getElementById('kcEmail').value;
+      document.getElementById('kcLoggedInfo').textContent='Sessão iniciada: '+(kcUtilizador.email||'utilizador autenticado')+'. Pode criar o pedido.';
+    }
+  }catch(e){console.error('Sessão KONECTA:',e);mensagemCheckoutKonecta('Não foi possível verificar a sessão. Atualize a página e tente novamente.',true);}
+}
+
+async function autenticarCheckoutKonecta(modo){
+  const email=document.getElementById('kcEmail').value.trim();
+  const password=document.getElementById('kcPassword').value;
+  if(!email||!password){mensagemCheckoutKonecta('Preencha o e-mail e a palavra-passe.',true);return;}
+  if(password.length<8){mensagemCheckoutKonecta('A palavra-passe deve ter pelo menos 8 caracteres.',true);return;}
+  const b1=document.getElementById('kcEntrarBtn'), b2=document.getElementById('kcRegistarBtn');  b1.disabled=b2.disabled=true;
+  mensagemCheckoutKonecta(modo==='entrar'?'A iniciar sessão…':'A criar conta…');
+  try{
+    let result;
+    if(modo==='entrar'){
+      result=await supabaseClient.auth.signInWithPassword({email,password});
+    }else{
+      result=await supabaseClient.auth.signUp({email,password,options:{emailRedirectTo:window.location.href.split('#')[0]}});
+    }
+    if(result.error) throw result.error;
+    if(modo==='registar'&&!result.data.session){
+      mensagemCheckoutKonecta('Conta registada. Verifique o seu e-mail para confirmar a conta; depois volte aqui e entre com a sua palavra-passe.');
+      return;
+    }
+    document.getElementById('kcPassword').value='';
+    await sincronizarSessaoCheckoutKonecta();
+    mensagemCheckoutKonecta(modo==='entrar'?'Sessão iniciada. Já pode criar o pedido.':'Conta criada e sessão iniciada. Já pode criar o pedido.');
+  }catch(e){
+    console.error('Autenticação checkout:',e);
+    let msg=(e&&e.message)||'Falha na autenticação.';
+    if(/invalid login credentials/i.test(msg)) msg='E-mail ou palavra-passe incorrectos.';
+    else if(/email not confirmed/i.test(msg)) msg='Confirme primeiro o seu e-mail e tente entrar novamente.';
+    mensagemCheckoutKonecta(msg,true);
+  }finally{b1.disabled=b2.disabled=false;}
+}
+
+async function sairCheckoutKonecta(){
+  const {error}=await supabaseClient.auth.signOut();
+  if(error){mensagemCheckoutKonecta('Não foi possível terminar a sessão: '+error.message,true);return;}
+  kcUtilizador=null;
+  document.getElementById('kcPassword').value='';
+  await sincronizarSessaoCheckoutKonecta();
+  mensagemCheckoutKonecta('Sessão terminada. Entre novamente para criar um pedido.');
+}
+
+document.getElementById('kcFormPublicidade')?.addEventListener('submit',async function(ev){
+  ev.preventDefault();
+  if(!kcUtilizador){mensagemCheckoutKonecta('Entre na sua conta antes de criar o pedido.',true);return;}
+  const btn=document.getElementById('kcCriarPedidoBtn');
+  btn.disabled=true;btn.textContent='A criar pedido…';
+  mensagemCheckoutKonecta('A enviar o pedido para a KONECTA…');
+  try{
+    const {data:sessionData,error:sessionError}=await supabaseClient.auth.getSession();
+    if(sessionError) throw sessionError;
+    const token=sessionData.session?.access_token;
+    if(!token) throw new Error('A sessão expirou. Entre novamente.');
+    const body={
+      plano_id:Number(document.getElementById('kcPlano').value),
+      anunciante:document.getElementById('kcAnunciante').value.trim(),
+      telefone:document.getElementById('kcTelefone').value.trim(),
+      email:document.getElementById('kcEmail').value.trim(),
+      metodo_pagamento:document.getElementById('kcMetodo').value
+    };
+    const resp=await fetch(SUPABASE_URL+'/functions/v1/konecta-manual-order',{
+      method:'POST',headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY,'Authorization':'Bearer '+token},body:JSON.stringify(body)
+    });
+    const payload=await resp.json().catch(()=>({}));
+    if(!resp.ok) throw new Error(({unauthorized:'A sessão expirou. Entre novamente.',plano_nao_encontrado:'O plano escolhido não está disponível.',server_configuration_error:'A integração de pedidos está temporariamente indisponível.',pedido_nao_criado:'Não foi possível criar o pedido. Tente novamente.'})[payload.error]||payload.error||'Não foi possível criar o pedido.');
+    const valor=Number(payload.valor).toLocaleString('pt-PT');
+    const metodo=payload.metodo_pagamento==='iban'?'Transferência bancária / IBAN':'Multicaixa Express';
+    mensagemCheckoutKonecta('PEDIDO CRIADO — PENDENTE DE PAGAMENTO\nReferência: '+payload.referencia+'\nValor: '+valor+' '+(payload.moeda||'AOA')+'\nMétodo: '+metodo+'\n\nA referência foi registada. Contacte a equipa KONECTA pelo WhatsApp para receber/confirmar as instruções de pagamento. O anúncio só deve ser activado após confirmação do pagamento.');
+    const wa='https://wa.me/244946110370?text='+encodeURIComponent('Olá, KONECTA. Criei um pedido de publicidade. Referência: '+payload.referencia+' | Valor: '+valor+' '+(payload.moeda||'AOA')+' | Método: '+metodo+'. Preciso das instruções para concluir o pagamento.');
+    let a=document.getElementById('kcWhatsAppPedido');
+    if(!a){a=document.createElement('a');a.id='kcWhatsAppPedido';a.className='kc-btn';a.target='_blank';a.rel='noopener noreferrer';a.style.display='inline-block';a.style.marginTop='12px';a.style.textDecoration='none';a.textContent='Continuar no WhatsApp';document.getElementById('kcResultado').after(a);}
+    a.href=wa;a.style.display='inline-block';
+  }catch(e){console.error('Criação pedido publicidade:',e);mensagemCheckoutKonecta(e.message||'Erro ao criar pedido.',true);}
+  finally{btn.disabled=false;btn.textContent='Criar pedido de publicidade';}
+});
+
+
+/* =========================================================
    PUBLICIDADE
 ========================================================= */
 
@@ -5811,7 +5993,6 @@ document.addEventListener(
       fecharCadastroEmpresa();
 
       return;
-
     }
 
 
