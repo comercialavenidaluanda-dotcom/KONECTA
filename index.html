@@ -3420,21 +3420,25 @@ function mostrarEmpresas(lista){
       "resultadoEmpresas"
     );
 
+  if(!el){
+    return;
+  }
 
-  if(!lista.length){
+  if(!Array.isArray(lista) || !lista.length){
 
     el.innerHTML = `
-
-      <div class="empty">
-        🔎 Nenhuma empresa encontrada.
+      <div class="empty" role="status" aria-live="polite">
+        <strong>🔎 Nenhuma empresa encontrada.</strong>
+        <p>Experimente outro nome, actividade ou localização.</p>
+        <button type="button" class="view-company" onclick="limparPesquisa()">
+          Limpar pesquisa
+        </button>
       </div>
-
     `;
 
     return;
 
   }
-
 
   el.innerHTML = `
 
@@ -3447,14 +3451,11 @@ function mostrarEmpresas(lista){
             e.id ?? ""
           );
 
-
         const nome =
           obterNomeEmpresa(e);
 
-
         const setor =
           obterSetorEmpresa(e);
-
 
         const endereco =
           String(
@@ -3462,20 +3463,25 @@ function mostrarEmpresas(lista){
             "Angola"
           );
 
-
         const contacto =
           String(
-            e.contacto ||
-            ""
-          );
-
+            e.contacto || ""
+          ).trim();
 
         const email =
           String(
-            e.email ||
-            ""
-          );
+            e.email || ""
+          ).trim();
 
+        const telefoneHref =
+          contacto
+            ? urlSegura("tel:" + contacto.replace(/[^0-9+]/g,""))
+            : "";
+
+        const emailHref =
+          email
+            ? urlSegura("mailto:" + email)
+            : "";
 
         return `
 
@@ -3499,56 +3505,65 @@ function mostrarEmpresas(lista){
 
             </div>
 
-
             <div class="company-info">
 
-              📍
-              ${escapar(endereco)}
+              <div>
+                📍 ${escapar(endereco)}
+              </div>
 
               ${
-                contacto
+
+                contacto && telefoneHref
                   ? `
-                    <br>
-                    📞
-                    ${escapar(contacto)}
+                    <div>
+                      📞
+                      <a
+                        href="${escapar(telefoneHref)}"
+                        aria-label="Ligar para ${escapar(nome)}"
+                        style="color:inherit;text-decoration:underline;"
+                      >${escapar(contacto)}</a>
+                    </div>
                   `
                   : ""
+
               }
 
               ${
-                email
+
+                email && emailHref
                   ? `
-                    <br>
-                    ✉️
-                    ${escapar(email)}
+                    <div>
+                      ✉️
+                      <a
+                        href="${escapar(emailHref)}"
+                        aria-label="Enviar email para ${escapar(nome)}"
+                        style="color:inherit;text-decoration:underline;overflow-wrap:anywhere;"
+                      >${escapar(email)}</a>
+                    </div>
                   `
                   : ""
+
               }
 
             </div>
 
-
             ${
               empresaEhDestaque(e)
-
                 ? `
-
                   <span class="badge-verified">
                     ⭐ Empresa em destaque
                   </span>
-
                   <br><br>
-
                 `
-
                 : ""
             }
 
-
             <button
+              type="button"
               class="view-company"
               data-company-id="${escapar(empresaId)}"
               onclick="detalhesEmpresaPorId(this.dataset.companyId)"
+              aria-label="Ver detalhes de ${escapar(nome)}"
             >
               VER EMPRESA →
             </button>
@@ -3564,7 +3579,6 @@ function mostrarEmpresas(lista){
   `;
 
 }
-
 
 /* =========================================================
    DETALHE DA EMPRESA
