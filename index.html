@@ -4487,7 +4487,7 @@ document
 function normalizarPesquisaKonecta(valor){
   return String(valor??"")
     .normalize("NFD")
-    .replace(/[\\u0300-\\u036f]/g,"")
+    .replace(/[\u0300-\u036f]/g,"")
     .toLocaleLowerCase("pt-PT")
     .trim();
 }
@@ -4497,7 +4497,7 @@ function pesquisarEmpresas(){
   const filtro=document.getElementById("categoriaFiltro");
   const texto=normalizarPesquisaKonecta(campo?.value||"");
   const categoria=normalizarPesquisaKonecta(filtro?.value||"");
-  const termos=texto.split(/\\s+/).filter(Boolean);
+  const termos=texto.split(/\s+/).filter(Boolean);
 
   empresasFiltradas=empresas.filter(e=>{
     const conjunto=normalizarPesquisaKonecta([
