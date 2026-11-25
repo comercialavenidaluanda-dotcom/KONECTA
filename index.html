@@ -3192,126 +3192,46 @@ function empresaEhDestaque(e){
 ========================================================= */
 
 async function carregarEmpresas(){
-
-  const el =
-    document.getElementById(
-      "resultadoEmpresas"
-    );
-
+  const el=document.getElementById("resultadoEmpresas");
+  if(el) el.innerHTML='<div class="empty" role="status">A carregar empresas…</div>';
 
   try{
+    const campos="id,empresa,setor,email,contacto,endereco,logo_url,plano,plano_status,destaque,pagamento_confirmado,pagamento_data,plano_inicio,plano_fim,ativa,destaque_ordem,destaque_inicio,destaque_fim,banner_url,imagem";
+    const lote=500;
+    const todos=[];
+    let inicio=0;
 
-    const {
-      data,
-      error
-    } = await supabaseClient
+    // Paginação explícita: não depender do limite máximo implícito da API.
+    while(true){
+      const {data,error}=await supabaseClient
+        .from("empresas")
+        .select(campos)
+        .eq("ativa",true)
+        .order("id",{ascending:true})
+        .range(inicio,inicio+lote-1);
 
-      .from("empresas")
-
-      .select(`
-        id,
-        empresa,
-        setor,
-        email,
-        contacto,
-        endereco,
-        logo_url,
-        plano,
-        plano_status,
-        destaque,
-        pagamento_confirmado,
-        pagamento_data,
-        plano_inicio,
-        plano_fim,
-        ativa,
-        destaque_ordem,
-        destaque_inicio,
-        destaque_fim,
-        banner_url,
-        imagem
-      `)
-
-      .eq(
-        "ativa",
-        true
-      )
-
-      .limit(5000);
-
-
-    if(error){
-      throw error;
+      if(error) throw error;
+      const pagina=Array.isArray(data)?data:[];
+      todos.push(...pagina);
+      if(pagina.length<lote) break;
+      inicio+=lote;
     }
 
+    empresas=todos;
+    empresasFiltradas=[...empresas];
+    mostrarEmpresas(empresasFiltradas);
+    mostrarDestaques(empresas);
 
-    empresas =
-      Array.isArray(data)
-        ? data
-        : [];
-
-
-    empresasFiltradas =
-      [...empresas];
-
-
-    mostrarEmpresas(
-      empresasFiltradas
-    );
-
-
-    mostrarDestaques(
-      empresas
-    );
-
-
-    const total =
-      empresas.length;
-
-
-    document
-      .getElementById(
-        "totalEmpresas"
-      )
-      .textContent =
-        total + "+";
-
-
-    document
-      .getElementById(
-        "heroTotalEmpresas"
-      )
-      .textContent =
-        total + "+";
-
-
+    const total=empresas.length;
+    const contador=document.getElementById("totalEmpresas");
+    const contadorHero=document.getElementById("heroTotalEmpresas");
+    if(contador) contador.textContent=total.toLocaleString("pt-PT");
+    if(contadorHero) contadorHero.textContent=total.toLocaleString("pt-PT");
   }catch(error){
-
-    console.error(
-      "Erro ao carregar empresas:",
-      error
-    );
-
-
-    el.innerHTML = `
-
-      <div class="error">
-
-        Não foi possível carregar as empresas.
-
-        <br><br>
-
-        Verifique a tabela
-        <strong>empresas</strong>
-        e as políticas públicas do Supabase.
-
-      </div>
-
-    `;
-
+    console.error("Erro ao carregar empresas:",error);
+    if(el) el.innerHTML='<div class="error" role="alert">Não foi possível carregar as empresas. Verifique a ligação e tente novamente.</div>';
   }
-
 }
-
 
 /* =========================================================
    MOSTRAR DESTAQUES
@@ -4564,96 +4484,37 @@ document
    PESQUISA
 ========================================================= */
 
-function pesquisarEmpresas(){
-
-  const texto =
-    document
-      .getElementById(
-        "empresaPesquisa"
-      )
-      .value
-      .trim()
-      .toLowerCase();
-
-
-  const categoria =
-    document
-      .getElementById(
-        "categoriaFiltro"
-      )
-      .value
-      .trim()
-      .toLowerCase();
-
-
-  empresasFiltradas =
-    empresas.filter(e => {
-
-      const textoEmpresa = (
-
-        String(
-          e.empresa ||
-          ""
-        )
-        + " " +
-
-        String(
-          e.setor ||
-          ""
-        )
-        + " " +
-
-        String(
-          e.contacto ||
-          ""
-        )
-        + " " +
-
-        String(
-          e.email ||
-          ""
-        )
-        + " " +
-
-        String(
-          e.endereco ||
-          ""
-        )
-
-      ).toLowerCase();
-
-
-      const setor =
-        String(
-          e.setor ||
-          ""
-        ).toLowerCase();
-
-
-      const correspondeTexto =
-        !texto ||
-        textoEmpresa.includes(texto);
-
-
-      const correspondeCategoria =
-        !categoria ||
-        setor.includes(categoria);
-
-
-      return (
-        correspondeTexto &&
-        correspondeCategoria
-      );
-
-    });
-
-
-  mostrarEmpresas(
-    empresasFiltradas
-  );
-
+function normalizarPesquisaKonecta(valor){
+  return String(valor??"")
+    .normalize("NFD")
+    .replace(/[\\u0300-\\u036f]/g,"")
+    .toLocaleLowerCase("pt-PT")
+    .trim();
 }
 
+function pesquisarEmpresas(){
+  const campo=document.getElementById("empresaPesquisa");
+  const filtro=document.getElementById("categoriaFiltro");
+  const texto=normalizarPesquisaKonecta(campo?.value||"");
+  const categoria=normalizarPesquisaKonecta(filtro?.value||"");
+  const termos=texto.split(/\\s+/).filter(Boolean);
+
+  empresasFiltradas=empresas.filter(e=>{
+    const conjunto=normalizarPesquisaKonecta([
+      e.empresa,e.setor,e.contacto,e.email,e.endereco
+    ].filter(Boolean).join(" "));
+    const setor=normalizarPesquisaKonecta(e.setor||"");
+    const correspondeTexto=termos.every(t=>conjunto.includes(t));
+    const correspondeCategoria=!categoria||setor.includes(categoria);
+    return correspondeTexto&&correspondeCategoria;
+  });
+
+  mostrarEmpresas(empresasFiltradas);
+  const contador=document.getElementById("totalResultadosPesquisa");
+  if(contador){
+    contador.textContent=empresasFiltradas.length.toLocaleString("pt-PT")+" empresas encontradas";
+  }
+}
 
 /* =========================================================
    CATEGORIA
@@ -4682,31 +4543,17 @@ function filtrarCategoria(categoria){
 ========================================================= */
 
 function limparPesquisa(){
-
-  document
-    .getElementById(
-      "empresaPesquisa"
-    )
-    .value = "";
-
-
-  document
-    .getElementById(
-      "categoriaFiltro"
-    )
-    .value = "";
-
-
-  empresasFiltradas =
-    [...empresas];
-
-
-  mostrarEmpresas(
-    empresasFiltradas
-  );
-
+  const campo=document.getElementById("empresaPesquisa");
+  const filtro=document.getElementById("categoriaFiltro");
+  const hero=document.getElementById("heroSearch");
+  if(campo) campo.value="";
+  if(filtro) filtro.value="";
+  if(hero) hero.value="";
+  empresasFiltradas=[...empresas];
+  mostrarEmpresas(empresasFiltradas);
+  const contador=document.getElementById("totalResultadosPesquisa");
+  if(contador) contador.textContent=empresasFiltradas.length.toLocaleString("pt-PT")+" empresas encontradas";
 }
-
 
 /* =========================================================
    PESQUISA HERO
